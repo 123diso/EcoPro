@@ -39,6 +39,14 @@ const Navbar: React.FC = () => {
             Categorías
           </NavLink>
         </li>
+        <li>
+          <NavLink
+            to="/admin"
+            className={({ isActive }) => (isActive ? "active" : undefined)}
+          >
+            Admin
+          </NavLink>
+        </li>
       </ul>
 
       <div className="navbar-icons">

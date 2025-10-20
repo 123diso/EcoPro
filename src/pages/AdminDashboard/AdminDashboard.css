@@ -1,0 +1,161 @@
+.admin-dashboard {
+  padding: 18px 20px 22px;
+  margin: 0 8%;
+  color: #2f3e2f;
+  font-family: "Montserrat", sans-serif;
+}
+
+.header {
+  margin-bottom: 24px;
+}
+
+.header h2 {
+  font-size: 1.2rem;
+  color: #6b7b6b;
+  margin-bottom: 4px;
+}
+
+.header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2f3e2f;
+}
+
+.header p {
+  font-size: 0.95rem;
+  color: #4b5b4b;
+}
+
+/* Panel de administración */
+.panel {
+  background-color: #f6f7f6;
+  border-radius: 10px;
+  padding: 24px;
+  margin-bottom: 28px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.panel h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+
+.stats-container {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.stat {
+  flex: 1 1 30%;
+  background: #ffffff;
+  border: 1px solid #dcdedc;
+  border-radius: 10px;
+  padding: 16px 20px;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.stat h4 {
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+  color: #374537;
+}
+
+.stat span {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #2f3e2f;
+}
+
+.register-button {
+  display: inline-block;
+  background-color: #3b583b;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.register-button:hover {
+  background-color: #2f462f;
+}
+
+/* Sección de alertas */
+.alerts {
+  margin-top: 28px;
+}
+
+.alerts h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.alert {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 14px;
+  border: 1px solid transparent;
+}
+
+.alert.urgent {
+  background-color: #fff2f2;
+  border-color: #e08585;
+}
+
+.alert.warning {
+  background-color: #fff9f0;
+  border-color: #e5c27a;
+}
+
+.alert strong {
+  display: block;
+  font-size: 1rem;
+  color: #2f3e2f;
+}
+
+.alert p {
+  margin: 6px 0 0;
+  font-size: 0.9rem;
+  color: #4b5b4b;
+}
+
+.view-more {
+  background: none;
+  border: none;
+  color: #3b583b;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.view-more:hover {
+  color: #2f462f;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .stats-container {
+    flex-direction: column;
+  }
+
+  .stat {
+    width: 100%;
+  }
+
+  .register-button {
+    width: 100%;
+    text-align: center;
+  }
+}
