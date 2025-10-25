@@ -7,7 +7,9 @@
     "activeUsers": 20,
     "type": "nearby",
     "logo": "/imgMap/imageLogoWhite.png",
-    "pin": "/imgMap/distance.png"
+    "pin": "/imgMap/distance.png",
+    "lat": 3.3737,
+    "lng": -76.5381
   },
   {
     "id": 2,
@@ -17,7 +19,9 @@
     "activeUsers": 4,
     "type": "nearby",
     "logo": "/imgMap/imageLogoWhite.png",
-    "pin": "/imgMap/distance.png"
+    "pin": "/imgMap/distance.png",
+    "lat": 3.3765,
+    "lng": -76.5337
   },
   {
     "id": 3,
@@ -27,7 +31,9 @@
     "activeUsers": 12,
     "type": "regular",
     "logo": "/imgMap/imageLogo.png",
-    "pin": "/imgMap/distance.png"
+    "pin": "/imgMap/distance.png",
+    "lat": 3.3871,
+    "lng": -76.5242
   },
   {
     "id": 4,
@@ -37,7 +43,9 @@
     "activeUsers": 40,
     "type": "regular",
     "logo": "/imgMap/imageLogo.png",
-    "pin": "/imgMap/distance.png"
+    "pin": "/imgMap/distance.png",
+    "lat": 3.3871,
+    "lng": -76.5242
   },
   {
     "id": 5,
@@ -47,6 +55,8 @@
     "activeUsers": 2,
     "type": "regular",
     "logo": "/imgMap/imageLogo.png",
-    "pin": "/imgMap/distance.png"
+    "pin": "/imgMap/distance.png",
+    "lat": 3.3871,
+    "lng": -76.5242
   }
 ]

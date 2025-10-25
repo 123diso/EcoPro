@@ -4,8 +4,9 @@ export type NavItem = { id: PageId; label: string; href: string };
 
 // Sugeridos
 export type SuggestedItem = {
-  id: number | string;
-  name: string;
+  id?: number | string;
+  name?: string;
+  title?: string; // <-- agregado para compatibilidad con algunos JSON
   image: string;
 };
 
@@ -34,7 +35,7 @@ export type CardItem = {
   subtitle?: string;
 };
 
-//Navbar
+// Navbar
 export type NavIcon = {
   id: number | string;
   src: string;
@@ -47,7 +48,7 @@ export type SearchBarProps = {
   defaultValue?: string;
 };
 
-// página de Mapa
+// Página de Mapa
 export type DandiPoint = {
   id: number;
   name: string;
@@ -57,15 +58,18 @@ export type DandiPoint = {
   type: "nearby" | "regular";
   logo: string;
   pin?: string;
+  lat: number;
+  lng: number;
 };
 
+// Categorías
 export type Category = {
   id: number;
   name: string;
   image: string;
 };
 
-//  CardItem
+// CardItem
 export type CardData = Pick<CardItem, "name" | "image">;
 export type CardUIProps = {
   onClick?: () => void;
@@ -73,3 +77,11 @@ export type CardUIProps = {
   showName?: boolean;
 };
 export type SuggestedCardProps = CardData & CardUIProps;
+
+// Trueques
+export type TradeItem = {
+  id?: number | string;
+  title?: string;
+  image: string;
+  available?: number | string;
+};

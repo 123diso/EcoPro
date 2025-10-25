@@ -42,6 +42,31 @@
   object-fit: cover;
 }
 
+/*css de map*/
+/* src/pages/Map/map.css */
+.map-layout {
+  display: grid;
+  grid-template-columns: 600px 1fr;
+  gap: 0;
+  height: calc(100vh - 80px); /* ajusta según tu header */
+}
+
+.map-left {
+  overflow: auto;
+  padding: 16px;
+}
+
+.map-right {
+  height: 100%;
+  min-height: 400px;
+}
+
+/* Si usas una clase contenedora específica del mapa: */
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+}
+
 @media (max-width: 900px) {
   .map-layout {
     grid-template-columns: 1fr;

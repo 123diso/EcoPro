@@ -24,6 +24,8 @@
   align-items: center;
   gap: 14px;
   padding: 12px 18px;
+  text-decoration: none;
+  border: none;
 }
 
 .point__logo {
@@ -75,6 +77,7 @@
   padding: 10px 6px;
   /* línea divisoria sutil a la izquierda del badge */
   box-shadow: inset 4px 0 0 rgba(0, 0, 0, 0.06);
+  border: none;
 }
 
 .point__pin {

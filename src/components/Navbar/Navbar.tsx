@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import "./Navbar.css";
 import type { NavIcon } from "../../types";
 import navIconsData from "../../assets/navIcons.json";
@@ -7,6 +7,20 @@ import navIconsData from "../../assets/navIcons.json";
 const navIcons: NavIcon[] = navIconsData;
 
 const Navbar: React.FC = () => {
+  const navigate = useNavigate();
+
+  const handleIconClick = (alt: string) => {
+    if (alt === "User") {
+      navigate("/perfil"); // 👈 redirige al perfil
+    } else if (alt === "Chat") {
+      // puedes agregar aquí tu lógica para chat si lo deseas
+      console.log("Abrir chat (pendiente de implementar)");
+    } else if (alt === "Menu") {
+      // puedes abrir un menú lateral, por ejemplo
+      console.log("Abrir menú lateral (pendiente de implementar)");
+    }
+  };
+
   return (
     <nav className="navbar">
       <div className="navbar-brand">
@@ -43,7 +57,14 @@ const Navbar: React.FC = () => {
 
       <div className="navbar-icons">
         {navIcons.map(({ id, src, alt }) => (
-          <img key={id} src={src} alt={alt} />
+          <img
+            key={id}
+            src={src}
+            alt={alt}
+            className="nav-icon"
+            onClick={() => handleIconClick(alt)}
+            style={{ cursor: "pointer" }} // 👈 hace clickeable el ícono
+          />
         ))}
       </div>
     </nav>

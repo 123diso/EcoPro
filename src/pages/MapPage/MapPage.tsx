@@ -1,15 +1,19 @@
+// src/pages/Map/MapPage.tsx
 import React, { useMemo, useState } from "react";
 import SearchBar from "../../components/SearchBar/SearchBar";
 import PointCard from "../../components/PointCard/PointCard";
 import Button from "../../components/Button/Button";
 import type { DandiPoint } from "../../types";
 import pointsData from "../../assets/dandiPoints.json";
+import LeafletMap from "../../components/Map/LeafletMap";
+import UserLocationMarker from "../../components/Map/UserLocationMarker";
 import "./map.css";
 
 const allPoints: DandiPoint[] = pointsData as DandiPoint[];
 
 const MapPage: React.FC = () => {
   const [q, setQ] = useState("");
+  const [selectedPoint, setSelectedPoint] = useState<DandiPoint | null>(null);
 
   const nearby = useMemo(
     () =>
@@ -19,6 +23,7 @@ const MapPage: React.FC = () => {
       ),
     [q]
   );
+
   const regular = useMemo(
     () =>
       allPoints.filter(
@@ -28,9 +33,13 @@ const MapPage: React.FC = () => {
     [q]
   );
 
+  const visiblePoints = useMemo(
+    () => [...nearby, ...regular],
+    [nearby, regular]
+  );
+
   return (
     <main className="map-layout">
-      {/* Panel izquierdo */}
       <section className="map-left">
         <SearchBar onSearch={setQ} placeholder="Buscar punto Dandi..." />
 
@@ -38,7 +47,11 @@ const MapPage: React.FC = () => {
           <div className="map-section">
             <h2 className="map-section__title">Puntos Dandi cercanos</h2>
             {nearby.map((p) => (
-              <PointCard key={p.id} point={p} />
+              <PointCard
+                key={p.id}
+                point={p}
+                onFly={() => setSelectedPoint(p)}
+              />
             ))}
           </div>
         )}
@@ -49,14 +62,15 @@ const MapPage: React.FC = () => {
             <Button to="/puntos">sur</Button>
           </div>
           {regular.map((p) => (
-            <PointCard key={p.id} point={p} />
+            <PointCard key={p.id} point={p} onFly={() => setSelectedPoint(p)} />
           ))}
         </div>
       </section>
 
-      {/* Panel derecho (mapa) */}
       <section className="map-right">
-        <img src="/imgMap/imgBanner.png" alt="" className="map-placeholder" />
+        <LeafletMap points={visiblePoints} selectedPoint={selectedPoint}>
+          <UserLocationMarker />
+        </LeafletMap>
       </section>
     </main>
   );
