@@ -8,16 +8,16 @@ const navIcons: NavIcon[] = navIconsData;
 
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
+
   const handleIconClick = (alt: string) => {
     if (alt === "User") {
-    navigate("/perfil");
-  } else if (alt === "Chat") {
-    console.log("Abrir chat (pendiente de implementar)");
-  } else if (alt === "Menu") {
-    navigate("/configuracion"); 
-  }
-}; 
-
+      navigate("/perfil");
+    } else if (alt === "Chat") {
+      navigate("/notificaciones");
+    } else if (alt === "Menu") {
+      navigate("/configuracion");
+    }
+  };
 
   return (
     <nav className="navbar">
@@ -61,7 +61,7 @@ const Navbar: React.FC = () => {
             alt={alt}
             className="nav-icon"
             onClick={() => handleIconClick(alt)}
-            style={{ cursor: "pointer" }} // 👈 hace clickeable el ícono
+            style={{ cursor: "pointer" }}
           />
         ))}
       </div>

@@ -15,12 +15,14 @@ import { LoginPage } from "./pages/LoginPage/LoginPage";
 import { RegisterPage } from "./pages/RegisterPage/RegisterPage";
 import { ProfilePage } from "./pages/ProfilePage/ProfilePage";
 import SettingsPage from "./pages/SettingsPage/SettingsPage";
+import NotificationsPage from "./pages/NotificationsPage/NotificationsPage";
+import CategoriesPage from "./pages/CategoriesPage/CategoriesPage";
+import CategoryProductsPage from "./pages/CategoryProductsPage/CategoryProductsPage";
 import { AuthProvider } from "./context/AuthContextProvider";
 import { useAuth } from "./context/useAuthContext";
 import { SavedProvider } from "./context/SavedContext";
 import { UserProductsProvider } from "./context/UserProductsContext";
 import { SettingsProvider } from "./context/SettingsContext";
-import NotificationsPage from "./pages/NotificationsPage/NotificationsPage";
 import "./App.css";
 
 /* ---------- Layout autenticado ---------- */
@@ -77,6 +79,8 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <HomePage /> },
       { path: "mapa", element: <MapPage /> },
+      { path: "categorias", element: <CategoriesPage /> },
+      { path: "categoria/:categoryId", element: <CategoryProductsPage /> },
       { path: "punto/:id", element: <PuntoDetalle /> },
       { path: "perfil", element: <ProfilePage /> },
       { path: "configuracion", element: <SettingsPage /> },
