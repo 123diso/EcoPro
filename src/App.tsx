@@ -20,6 +20,7 @@ import { useAuth } from "./context/useAuthContext";
 import { SavedProvider } from "./context/SavedContext";
 import { UserProductsProvider } from "./context/UserProductsContext";
 import { SettingsProvider } from "./context/SettingsContext";
+import NotificationsPage from "./pages/NotificationsPage/NotificationsPage";
 import "./App.css";
 
 /* ---------- Layout autenticado ---------- */
@@ -79,6 +80,7 @@ const router = createBrowserRouter([
       { path: "punto/:id", element: <PuntoDetalle /> },
       { path: "perfil", element: <ProfilePage /> },
       { path: "configuracion", element: <SettingsPage /> },
+      { path: "notificaciones", element: <NotificationsPage /> },
       { path: "*", element: <Navigate to="/" replace /> },
     ],
   },
