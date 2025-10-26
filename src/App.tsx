@@ -13,17 +13,24 @@ import MapPage from "./pages/MapPage/MapPage";
 import PuntoDetalle from "./pages/PuntoDetalle/PuntoDetalle";
 import { LoginPage } from "./pages/LoginPage/LoginPage";
 import { RegisterPage } from "./pages/RegisterPage/RegisterPage";
-import { ProfilePage } from "./pages/ProfilePage/ProfilePage"; // 👈 tu página de perfil
-import { AuthProvider } from "./context/AuthContextProvider"; // 👈 provider de auth
-import { useAuth } from "./context/useAuthContext"; // 👈 hook de auth
-import { SavedProvider } from "./context/SavedContext"; // 👈 provider de SavedContext
+import { ProfilePage } from "./pages/ProfilePage/ProfilePage";
+import SettingsPage from "./pages/SettingsPage/SettingsPage";
+import { AuthProvider } from "./context/AuthContextProvider";
+import { useAuth } from "./context/useAuthContext";
+import { SavedProvider } from "./context/SavedContext";
+import { UserProductsProvider } from "./context/UserProductsContext";
+import { SettingsProvider } from "./context/SettingsContext";
 import "./App.css";
 
 /* ---------- Layout autenticado ---------- */
 const Layout: React.FC = () => (
   <SavedProvider>
-    <Navbar />
-    <Outlet />
+    <UserProductsProvider>
+      <SettingsProvider>
+        <Navbar />
+        <Outlet />
+      </SettingsProvider>
+    </UserProductsProvider>
   </SavedProvider>
 );
 
@@ -71,6 +78,7 @@ const router = createBrowserRouter([
       { path: "mapa", element: <MapPage /> },
       { path: "punto/:id", element: <PuntoDetalle /> },
       { path: "perfil", element: <ProfilePage /> },
+      { path: "configuracion", element: <SettingsPage /> },
       { path: "*", element: <Navigate to="/" replace /> },
     ],
   },

@@ -8,18 +8,16 @@ const navIcons: NavIcon[] = navIconsData;
 
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
-
   const handleIconClick = (alt: string) => {
     if (alt === "User") {
-      navigate("/perfil"); // 👈 redirige al perfil
-    } else if (alt === "Chat") {
-      // puedes agregar aquí tu lógica para chat si lo deseas
-      console.log("Abrir chat (pendiente de implementar)");
-    } else if (alt === "Menu") {
-      // puedes abrir un menú lateral, por ejemplo
-      console.log("Abrir menú lateral (pendiente de implementar)");
-    }
-  };
+    navigate("/perfil");
+  } else if (alt === "Chat") {
+    console.log("Abrir chat (pendiente de implementar)");
+  } else if (alt === "Menu") {
+    navigate("/configuracion"); 
+  }
+}; 
+
 
   return (
     <nav className="navbar">

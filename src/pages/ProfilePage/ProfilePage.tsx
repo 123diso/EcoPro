@@ -1,17 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/useAuthContext";
 import { useSaved } from "../../context/SavedContext";
+import { useUserProducts } from "../../context/UserProductsContext"; // ← Nuevo import
 import ProductCard from "../../components/ProductCard/ProductCard";
 import "./ProfilePage.css";
 
 export const ProfilePage: React.FC = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<"guardados" | "posts">(
-    "guardados"
-  );
+  const [activeTab, setActiveTab] = useState<"guardados" | "posts">("posts"); // ← Cambiar a "posts" por defecto
   const { saved } = useSaved();
+  const { userProducts, fetchUserProducts } = useUserProducts(); // ← Usar el nuevo contexto
+
+  useEffect(() => {
+    fetchUserProducts();
+  }, [fetchUserProducts]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -52,7 +56,7 @@ export const ProfilePage: React.FC = () => {
                 user?.user_metadata?.full_name ||
                 "Usuario"}
             </h1>
-            <p className="profile-posts">20 Posts</p>
+            <p className="profile-posts">{userProducts.length} Posts</p>
             <div className="profile-rating">
               <span>Rating: 4.5</span>
             </div>
@@ -85,9 +89,8 @@ export const ProfilePage: React.FC = () => {
               <button
                 className={`tab ${activeTab === "posts" ? "active" : ""}`}
                 onClick={() => setActiveTab("posts")}
-                disabled
               >
-                Mis Posts (pronto)
+                Mis Posts ({userProducts.length})
               </button>
             </div>
           </div>
@@ -106,6 +109,26 @@ export const ProfilePage: React.FC = () => {
                     category={p.category ?? ""}
                     condition={p.condition ?? ""}
                     location={p.location ?? ""}
+                  />
+                ))
+              )}
+            </div>
+          )}
+
+          {activeTab === "posts" && (
+            <div className="items-grid">
+              {userProducts.length === 0 ? (
+                <p className="saved-empty">No has publicado ningún producto aún.</p>
+              ) : (
+                userProducts.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    id={Number(product.id)}
+                    title={product.title}
+                    image={product.image}
+                    category={product.category}
+                    condition={product.condition}
+                    location={product.location}
                   />
                 ))
               )}
