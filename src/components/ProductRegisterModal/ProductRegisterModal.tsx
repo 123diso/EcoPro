@@ -33,35 +33,42 @@ const ProductRegisterModal: React.FC<ProductRegisterModalProps> = ({
     "Deportes",
     "Libros",
     "Juguetes",
-    "Otros"
+    "Otros",
   ];
 
   const conditions = [
     "Nuevo",
-    "Como nuevo", 
+    "Como nuevo",
     "Buen estado",
     "Regular",
-    "Necesita reparación"
+    "Necesita reparación",
   ];
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validar que todos los campos estén llenos
-    if (!formData.name || !formData.category || !formData.description || !formData.condition) {
+    if (
+      !formData.name ||
+      !formData.category ||
+      !formData.description ||
+      !formData.condition
+    ) {
       return; // No hacer nada si faltan campos
     }
-    
+
     onRegister(formData);
     // El cierre del modal y limpieza se manejará en el componente padre
   };
@@ -87,8 +94,8 @@ const ProductRegisterModal: React.FC<ProductRegisterModalProps> = ({
       <div className="modal-container">
         {/* Encabezado del modal */}
         <div className="modal-header">
-          <button 
-            className="back-button" 
+          <button
+            className="back-button"
             onClick={handleBackArrow}
             type="button"
           >
@@ -131,7 +138,7 @@ const ProductRegisterModal: React.FC<ProductRegisterModalProps> = ({
                   required
                 >
                   <option value="">Seleccionar categoría</option>
-                  {categories.map(cat => (
+                  {categories.map((cat) => (
                     <option key={cat} value={cat}>
                       {cat}
                     </option>
@@ -171,7 +178,7 @@ const ProductRegisterModal: React.FC<ProductRegisterModalProps> = ({
                   required
                 >
                   <option value="">selecciona estado</option>
-                  {conditions.map(cond => (
+                  {conditions.map((cond) => (
                     <option key={cond} value={cond}>
                       {cond}
                     </option>
@@ -190,15 +197,20 @@ const ProductRegisterModal: React.FC<ProductRegisterModalProps> = ({
 
           {/* Botones de acción */}
           <div className="form-actions">
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               className="action-button trade-button"
-              disabled={!formData.name || !formData.category || !formData.description || !formData.condition}
+              disabled={
+                !formData.name ||
+                !formData.category ||
+                !formData.description ||
+                !formData.condition
+              }
             >
               Hacer trueque
             </button>
-            <button 
-              type="button" 
+            <button
+              type="button"
               className="action-button cancel-button"
               onClick={handleCancel}
             >
