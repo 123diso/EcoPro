@@ -1,18 +1,12 @@
 import { useState } from "react";
 import { supabase } from "../supabaseClient";
-
-interface AuthData {
-  email: string;
-  password: string;
-  fullName?: string;
-  username?: string;
-}
+import type { AuthFormData } from "../types/types";
 
 export const useAuthActions = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const signUp = async ({ email, password, fullName, username }: AuthData) => {
+  const signUp = async (formData: AuthFormData) => {
     try {
       setLoading(true);
       setError(null);
@@ -21,12 +15,12 @@ export const useAuthActions = () => {
       await new Promise((resolve) => setTimeout(resolve, 100));
 
       const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
+        email: formData.email,
+        password: formData.password,
         options: {
           data: {
-            full_name: fullName,
-            username: username,
+            full_name: formData.fullName,
+            username: formData.username,
           },
         },
       });
@@ -59,7 +53,7 @@ export const useAuthActions = () => {
     }
   };
 
-  const signIn = async ({ email, password }: AuthData) => {
+  const signIn = async (formData: Pick<AuthFormData, 'email' | 'password'>) => {
     try {
       setLoading(true);
       setError(null);
@@ -68,8 +62,8 @@ export const useAuthActions = () => {
       await new Promise((resolve) => setTimeout(resolve, 100));
 
       const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+        email: formData.email,
+        password: formData.password,
       });
 
       if (error) {

@@ -6,7 +6,6 @@ export interface Category {
   id: string;
   name: string;
   image: string;
-  icon: string;
   description?: string;
 }
 
@@ -18,7 +17,6 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
   const navigate = useNavigate();
 
   const handleCategoryClick = () => {
-    // Navegar a la página específica de la categoría
     navigate(`/categoria/${category.id}`);
   };
 
@@ -46,7 +44,6 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
             className="category-card__image"
             loading="lazy"
           />
-          <div className="category-card__icon">{category.icon}</div>
         </div>
         
         <h3 className="category-card__name">{category.name}</h3>

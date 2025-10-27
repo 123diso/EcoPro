@@ -4,7 +4,7 @@ import "./ProductCard.css";
 import SaveButton from "../SaveButton/SaveButton";
 
 type ProductCardProps = {
-  id: number;
+  id: number | string;
   title: string;
   category: string;
   condition: string;
@@ -26,22 +26,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
     navigate(`/producto/${id}`);
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      handleClick();
-    }
-  };
-
   return (
-    <div
-      className="product-card"
-      onClick={handleClick}
-      onKeyDown={handleKeyDown}
-      tabIndex={0}
-      role="button"
-      aria-label={`Ver detalles de ${title}`}
-    >
+    <div className="product-card" onClick={handleClick}>
       <div className="product-card__image">
         <div
           className="product-card__image-placeholder"
@@ -61,7 +47,14 @@ const ProductCard: React.FC<ProductCardProps> = ({
         </div>
       </div>
 
-      <SaveButton />
+      <SaveButton
+        id={id}
+        title={title}
+        image={image}
+        category={category}
+        condition={condition}
+        location={location}
+      />
     </div>
   );
 };

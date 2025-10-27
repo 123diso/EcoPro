@@ -1,16 +1,17 @@
 /* SettingsPage.css */
 .settings-page {
   min-height: 100vh;
-  background-color: #FFF6DC; /* Beige claro */
+  background-color: #FFF6DC;
   padding: 2rem;
 }
 
 .settings-header {
-  background-color: #2E3F21; /* Verde oscuro */
+  background-color: #2E3F21;
   color: white;
   padding: 2rem;
   border-radius: 16px 16px 0 0;
   margin-bottom: 0;
+  position: relative;
 }
 
 .settings-title {
@@ -26,6 +27,59 @@
   margin: 0;
 }
 
+.save-status {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.save-status.saving {
+  background-color: #FFE3B3;
+  color: #8B7355;
+}
+
+.save-status.success {
+  background-color: #28a745;
+  color: white;
+}
+
+.save-status.error {
+  background-color: #dc3545;
+  color: white;
+}
+
+/* Información del usuario */
+.user-info-section {
+  background: white;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.user-info-title {
+  color: #2E3F21;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0 0 1rem 0;
+}
+
+.user-details {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.user-details p {
+  margin: 0;
+  color: #666;
+}
+
+.user-details strong {
+  color: #2E3F21;
+}
+
 .settings-container {
   background: white;
   border-radius: 0 0 16px 16px;
@@ -35,7 +89,7 @@
 
 .setting-block {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   padding: 1.5rem 2rem;
   border-bottom: 1px solid #f0f0f0;
   gap: 1rem;
@@ -50,6 +104,7 @@
   width: 40px;
   text-align: center;
   flex-shrink: 0;
+  margin-top: 0.25rem;
 }
 
 .setting-content {
@@ -57,7 +112,7 @@
 }
 
 .setting-label {
-  color: #2E3F21; /* Verde oscuro */
+  color: #2E3F21;
   font-size: 1.1rem;
   font-weight: 600;
   margin: 0 0 0.5rem 0;
@@ -68,6 +123,14 @@
   justify-content: space-between;
   align-items: center;
   color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.setting-description {
+  color: #888;
+  font-size: 0.9rem;
+  margin: 0;
+  line-height: 1.4;
 }
 
 /* Toggle Switch */
@@ -109,11 +172,16 @@
 }
 
 input:checked + .toggle-slider {
-  background-color: #C78E4E; /* Dorado/marrón claro */
+  background-color: #C78E4E;
 }
 
 input:checked + .toggle-slider:before {
   transform: translateX(26px);
+}
+
+input:disabled + .toggle-slider {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* Ubicación */
@@ -133,14 +201,20 @@ input:checked + .toggle-slider:before {
   transition: background-color 0.2s;
 }
 
-.location-edit-btn:hover {
+.location-edit-btn:hover:not(:disabled) {
   background-color: #f0f0f0;
+}
+
+.location-edit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .location-edit {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  width: 100%;
 }
 
 .location-input {
@@ -149,6 +223,11 @@ input:checked + .toggle-slider:before {
   border-radius: 4px;
   font-size: 0.9rem;
   flex: 1;
+}
+
+.location-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .location-actions {
@@ -176,6 +255,12 @@ input:checked + .toggle-slider:before {
   color: white;
 }
 
+.location-save:disabled,
+.location-cancel:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* Idioma */
 .language-selector {
   position: relative;
@@ -192,6 +277,11 @@ input:checked + .toggle-slider:before {
   font-size: 0.9rem;
   cursor: pointer;
   min-width: 120px;
+}
+
+.language-select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .language-arrow {
@@ -215,14 +305,19 @@ input:checked + .toggle-slider:before {
   width: 100%;
 }
 
-.help-button:hover {
+.help-button:hover:not(:disabled) {
   color: #C78E4E;
+}
+
+.help-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* Botón cerrar sesión */
 .signout-button {
   width: 100%;
-  background-color: #E4A261; /* Naranja cálido */
+  background-color: #E4A261;
   color: white;
   border: none;
   padding: 1rem 1.5rem;
@@ -236,48 +331,26 @@ input:checked + .toggle-slider:before {
   align-items: center;
 }
 
-.signout-button:hover {
+.signout-button:hover:not(:disabled) {
   background-color: #D9955D;
+}
+
+.signout-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .signout-icon {
   font-size: 1.2rem;
 }
 
-/* Modo oscuro */
-[data-theme="dark"] {
-  --bg-color: #1a1a1a;
-  --text-color: #ffffff;
-  --card-bg: #2d2d2d;
-  --border-color: #404040;
-}
-
-[data-theme="dark"] .settings-page {
-  background-color: var(--bg-color);
-  color: var(--text-color);
-}
-
-[data-theme="dark"] .settings-container {
-  background-color: var(--card-bg);
-  color: var(--text-color);
-}
-
-[data-theme="dark"] .setting-block {
-  border-bottom-color: var(--border-color);
-}
-
-[data-theme="dark"] .setting-label {
-  color: var(--text-color);
-}
-
-[data-theme="dark"] .setting-field {
-  color: var(--text-color);
-}
-
-[data-theme="dark"] .language-select {
-  background-color: var(--card-bg);
-  color: var(--text-color);
-  border-color: var(--border-color);
+/* Loading */
+.settings-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  color: #666;
 }
 
 /* Responsive */
@@ -297,6 +370,16 @@ input:checked + .toggle-slider:before {
   .settings-title {
     font-size: 1.5rem;
   }
+
+  .save-status {
+    position: static;
+    margin-top: 1rem;
+    display: inline-block;
+  }
+
+  .user-info-section {
+    padding: 1rem 1.5rem;
+  }
 }
 
 @media (max-width: 480px) {
@@ -307,6 +390,10 @@ input:checked + .toggle-slider:before {
   }
 
   .toggle-switch {
+    align-self: flex-end;
+  }
+
+  .language-selector {
     align-self: flex-end;
   }
 }

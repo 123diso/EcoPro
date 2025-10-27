@@ -85,3 +85,21 @@ export type TradeItem = {
   image: string;
   available?: number | string;
 };
+
+// ...lo que ya tienes arriba
+
+export type Product = {
+  id: number;
+  title: string;
+  category: string;
+  condition: string; // p.ej. "Nuevo"
+  location: string; // p.ej. "Valle de Lilí"
+  image?: string; // imagen principal
+  images?: string[]; // galería opcional
+  description?: string;
+  sellerName?: string;
+  sellerRating?: string;
+  sellerStats?: string;
+};
+
+// ...resto de tipos

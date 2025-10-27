@@ -122,6 +122,34 @@
   font-family: inherit;
 }
 
+/* Vista previa de imagen */
+.image-preview {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.preview-title {
+  color: #2E3F21;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.preview-image {
+  display: flex;
+  justify-content: center;
+}
+
+.preview-image img {
+  max-width: 200px;
+  max-height: 150px;
+  border-radius: 8px;
+  border: 2px solid #C78E4E;
+}
+
 /* Sección QR */
 .qr-section {
   display: flex;
@@ -186,6 +214,16 @@
   transform: translateY(-1px);
 }
 
+.action-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.action-button:disabled:hover {
+  background-color: #E4A868; /* Mantener el color original */
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .modal-container {
@@ -234,14 +272,4 @@
   .back-button {
     align-self: flex-start;
   }
-}
-
-.action-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none !important;
-}
-
-.action-button:disabled:hover {
-  background-color: #E4A868; /* Mantener el color original */
 }

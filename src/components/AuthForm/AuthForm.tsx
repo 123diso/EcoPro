@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Input } from "../Input/Input";
 import { useAuthActions } from "../../hooks/useAuth";
 import { EmailConfirmation } from "../EmailConfirmation/EmailConfirmation";
+import type { AuthFormData } from "../../types/types";
 import "./AuthForm.css";
 
 interface AuthFormProps {
@@ -10,11 +11,13 @@ interface AuthFormProps {
 }
 
 export const AuthForm: React.FC<AuthFormProps> = ({ mode, onSuccess }) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState<AuthFormData>({
+    email: "",
+    password: "",
+    fullName: "",
+    username: "",
+  });
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [fullName, setFullName] = useState("");
-  const [username, setUsername] = useState("");
   const [showConfirmation, setShowConfirmation] = useState(false);
   const { signIn, signUp, loading, error, clearError } = useAuthActions();
 
@@ -29,15 +32,22 @@ export const AuthForm: React.FC<AuthFormProps> = ({ mode, onSuccess }) => {
     };
   };
 
-  const passwordValidation = validatePassword(password);
+  const passwordValidation = validatePassword(formData.password);
   const isPasswordValid = Object.values(passwordValidation).every(Boolean);
+
+  const handleInputChange = (field: keyof AuthFormData, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     clearError();
 
     if (mode === "register") {
-      if (password !== confirmPassword) {
+      if (formData.password !== confirmPassword) {
         return;
       }
       if (!isPasswordValid) {
@@ -47,8 +57,8 @@ export const AuthForm: React.FC<AuthFormProps> = ({ mode, onSuccess }) => {
 
     const result =
       mode === "login"
-        ? await signIn({ email, password })
-        : await signUp({ email, password, fullName, username });
+        ? await signIn({ email: formData.email, password: formData.password })
+        : await signUp(formData);
 
     if (result.success) {
       if (mode === "register") {
@@ -74,8 +84,8 @@ export const AuthForm: React.FC<AuthFormProps> = ({ mode, onSuccess }) => {
           <Input
             type="email"
             placeholder="Correo electronico"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={formData.email}
+            onChange={(e) => handleInputChange('email', e.target.value)}
             required
           />
         </div>
@@ -84,11 +94,11 @@ export const AuthForm: React.FC<AuthFormProps> = ({ mode, onSuccess }) => {
           <Input
             type="password"
             placeholder="Contraseña"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            value={formData.password}
+            onChange={(e) => handleInputChange('password', e.target.value)}
             required
           />
-          {mode === "register" && password && (
+          {mode === "register" && formData.password && (
             <div className="password-requirements">
               <h4>Requisitos de contraseña:</h4>
               <div className="requirement-item">
@@ -181,8 +191,8 @@ export const AuthForm: React.FC<AuthFormProps> = ({ mode, onSuccess }) => {
               <Input
                 type="text"
                 placeholder="Nombre completo"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
+                value={formData.fullName || ""}
+                onChange={(e) => handleInputChange('fullName', e.target.value)}
                 required
               />
             </div>
@@ -191,8 +201,8 @@ export const AuthForm: React.FC<AuthFormProps> = ({ mode, onSuccess }) => {
               <Input
                 type="text"
                 placeholder="Nombre de usuario"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                value={formData.username || ""}
+                onChange={(e) => handleInputChange('username', e.target.value)}
                 required
               />
             </div>
@@ -212,13 +222,13 @@ export const AuthForm: React.FC<AuthFormProps> = ({ mode, onSuccess }) => {
         {error && <div className="error-message">{error}</div>}
 
         {mode === "register" &&
-          password !== confirmPassword &&
-          password &&
+          formData.password !== confirmPassword &&
+          formData.password &&
           confirmPassword && (
             <div className="error-message">Las contraseñas no coinciden</div>
           )}
 
-        {mode === "register" && password && !isPasswordValid && (
+        {mode === "register" && formData.password && !isPasswordValid && (
           <div className="error-message">
             La contraseña debe cumplir todos los requisitos
           </div>

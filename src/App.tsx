@@ -23,16 +23,20 @@ import { useAuth } from "./context/useAuthContext";
 import { SavedProvider } from "./context/SavedContext";
 import { UserProductsProvider } from "./context/UserProductsContext";
 import { SettingsProvider } from "./context/SettingsContext";
+import ProductDetail from "./pages/ProductDetail/ProductDetail";
 import "./App.css";
 
 /* ---------- Layout autenticado ---------- */
 const Layout: React.FC = () => (
   <SavedProvider>
     <UserProductsProvider>
-      <SettingsProvider>
-        <Navbar />
-        <Outlet />
-      </SettingsProvider>
+      <AuthProvider>
+        <SettingsProvider>
+          <Navbar />
+          
+          <Outlet />
+        </SettingsProvider>
+      </AuthProvider>
     </UserProductsProvider>
   </SavedProvider>
 );
@@ -84,6 +88,7 @@ const router = createBrowserRouter([
       { path: "punto/:id", element: <PuntoDetalle /> },
       { path: "perfil", element: <ProfilePage /> },
       { path: "configuracion", element: <SettingsPage /> },
+      { path: "producto/:id", element: <ProductDetail /> },
       { path: "notificaciones", element: <NotificationsPage /> },
       { path: "*", element: <Navigate to="/" replace /> },
     ],

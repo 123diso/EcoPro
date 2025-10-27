@@ -1,17 +1,11 @@
 import React, { useState } from "react";
 import "./ProductRegisterModal.css";
+import type { ProductFormData } from "../../types";
 
 interface ProductRegisterModalProps {
   isOpen: boolean;
   onClose: () => void;
   onRegister: (productData: ProductFormData) => void;
-}
-
-export interface ProductFormData {
-  name: string;
-  category: string;
-  description: string;
-  condition: string;
 }
 
 const ProductRegisterModal: React.FC<ProductRegisterModalProps> = ({
@@ -24,6 +18,7 @@ const ProductRegisterModal: React.FC<ProductRegisterModalProps> = ({
     category: "",
     description: "",
     condition: "",
+    image: "",
   });
 
   const categories = [
@@ -33,37 +28,52 @@ const ProductRegisterModal: React.FC<ProductRegisterModalProps> = ({
     "Deportes",
     "Libros",
     "Juguetes",
-    "Otros"
+    "Otros",
   ];
 
   const conditions = [
     "Nuevo",
-    "Como nuevo", 
+    "Como nuevo",
     "Buen estado",
     "Regular",
-    "Necesita reparación"
+    "Necesita reparación",
   ];
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validar que todos los campos estén llenos
-    if (!formData.name || !formData.category || !formData.description || !formData.condition) {
-      return; // No hacer nada si faltan campos
+    if (
+      !formData.name ||
+      !formData.category ||
+      !formData.description ||
+      !formData.condition ||
+      !formData.image
+    ) {
+      return;
     }
-    
+
     onRegister(formData);
-    // El cierre del modal y limpieza se manejará en el componente padre
+    // Limpiar formulario después de registrar
+    setFormData({
+      name: "",
+      category: "",
+      description: "",
+      condition: "",
+      image: "",
+    });
   };
 
   const handleCancel = () => {
@@ -72,6 +82,7 @@ const ProductRegisterModal: React.FC<ProductRegisterModalProps> = ({
       category: "",
       description: "",
       condition: "",
+      image: "",
     });
     onClose();
   };
@@ -87,8 +98,8 @@ const ProductRegisterModal: React.FC<ProductRegisterModalProps> = ({
       <div className="modal-container">
         {/* Encabezado del modal */}
         <div className="modal-header">
-          <button 
-            className="back-button" 
+          <button
+            className="back-button"
             onClick={handleBackArrow}
             type="button"
           >
@@ -131,12 +142,28 @@ const ProductRegisterModal: React.FC<ProductRegisterModalProps> = ({
                   required
                 >
                   <option value="">Seleccionar categoría</option>
-                  {categories.map(cat => (
+                  {categories.map((cat) => (
                     <option key={cat} value={cat}>
                       {cat}
                     </option>
                   ))}
                 </select>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="image" className="form-label">
+                  URL de la imagen
+                </label>
+                <input
+                  type="url"
+                  id="image"
+                  name="image"
+                  value={formData.image}
+                  onChange={handleInputChange}
+                  placeholder="https://ejemplo.com/imagen.jpg"
+                  className="form-input"
+                  required
+                />
               </div>
             </div>
 
@@ -171,7 +198,7 @@ const ProductRegisterModal: React.FC<ProductRegisterModalProps> = ({
                   required
                 >
                   <option value="">selecciona estado</option>
-                  {conditions.map(cond => (
+                  {conditions.map((cond) => (
                     <option key={cond} value={cond}>
                       {cond}
                     </option>
@@ -181,24 +208,40 @@ const ProductRegisterModal: React.FC<ProductRegisterModalProps> = ({
             </div>
           </div>
 
+          {/* Vista previa de la imagen */}
+          {formData.image && (
+            <div className="image-preview">
+              <h4 className="preview-title">Vista previa:</h4>
+              <div className="preview-image">
+                <img src={formData.image} alt="Vista previa" />
+              </div>
+            </div>
+          )}
+
           {/* Botón Generar QR */}
           <div className="qr-section">
             <button type="button" className="qr-button">
-              🧾 Generar QR
+              Generar QR
             </button>
           </div>
 
           {/* Botones de acción */}
           <div className="form-actions">
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               className="action-button trade-button"
-              disabled={!formData.name || !formData.category || !formData.description || !formData.condition}
+              disabled={
+                !formData.name ||
+                !formData.category ||
+                !formData.description ||
+                !formData.condition ||
+                !formData.image
+              }
             >
               Hacer trueque
             </button>
-            <button 
-              type="button" 
+            <button
+              type="button"
               className="action-button cancel-button"
               onClick={handleCancel}
             >

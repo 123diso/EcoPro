@@ -118,7 +118,9 @@ export const ProfilePage: React.FC = () => {
           {activeTab === "posts" && (
             <div className="items-grid">
               {userProducts.length === 0 ? (
-                <p className="saved-empty">No has publicado ningún producto aún.</p>
+                <p className="saved-empty">
+                  No has publicado ningún producto aún.
+                </p>
               ) : (
                 userProducts.map((product) => (
                   <ProductCard

@@ -4,7 +4,6 @@ import { useAuth } from "./useAuthContext";
 
 export interface UserSettings {
   notifications: boolean;
-  darkMode: boolean;
   location: string;
   language: string;
 }
@@ -16,8 +15,7 @@ interface SettingsContextType {
 }
 
 const defaultSettings: UserSettings = {
-  notifications: false,
-  darkMode: false,
+  notifications: true,
   location: "",
   language: "es"
 };
@@ -50,22 +48,26 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       if (data) {
         setSettings({
           notifications: data.notifications ?? defaultSettings.notifications,
-          darkMode: data.dark_mode ?? defaultSettings.darkMode,
           location: data.location ?? defaultSettings.location,
           language: data.language ?? defaultSettings.language,
         });
       } else {
-        await supabase
+        // Crear configuración por defecto si no existe
+        const { error: insertError } = await supabase
           .from('user_settings')
           .insert([
             {
               user_id: user.id,
               notifications: defaultSettings.notifications,
-              dark_mode: defaultSettings.darkMode,
               location: defaultSettings.location,
               language: defaultSettings.language,
+              created_at: new Date().toISOString(),
             }
           ]);
+
+        if (insertError) {
+          console.error('Error creating default settings:', insertError);
+        }
         
         setSettings(defaultSettings);
       }
@@ -89,41 +91,37 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         .upsert({
           user_id: user.id,
           notifications: updatedSettings.notifications,
-          dark_mode: updatedSettings.darkMode,
           location: updatedSettings.location,
           language: updatedSettings.language,
           updated_at: new Date().toISOString(),
+        }, {
+          onConflict: 'user_id'
         });
 
       if (error) throw error;
 
-      if (newSettings.darkMode !== undefined) {
-        applyDarkMode(newSettings.darkMode);
-      }
+      console.log('Settings updated successfully');
 
     } catch (error) {
       console.error('Error updating settings:', error);
+      // Revertir cambios en caso de error
       setSettings(settings);
     }
   }, [user, settings]);
-
-  const applyDarkMode = (isDark: boolean) => {
-    if (isDark) {
-      document.documentElement.setAttribute('data-theme', 'dark');
-    } else {
-      document.documentElement.removeAttribute('data-theme');
-    }
-  };
 
   useEffect(() => {
     loadUserSettings();
   }, [loadUserSettings]);
 
+  // Recargar configuraciones cuando cambie el usuario
   useEffect(() => {
-    if (!loading) {
-      applyDarkMode(settings.darkMode);
+    if (user) {
+      loadUserSettings();
+    } else {
+      setSettings(defaultSettings);
+      setLoading(false);
     }
-  }, [settings.darkMode, loading]);
+  }, [user, loadUserSettings]);
 
   return (
     <SettingsContext.Provider value={{
