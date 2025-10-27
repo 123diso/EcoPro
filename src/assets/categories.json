@@ -1,0 +1,65 @@
+[
+  {
+    "id": "hogar",
+    "name": "Hogar",
+    "image": "https://images.pexels.com/photos/5824897/pexels-photo-5824897.jpeg?auto=compress&cs=tinysrgb&w=300",
+    "icon": "🏠",
+    "description": "Artículos para el hogar y muebles"
+  },
+  {
+    "id": "accesorios",
+    "name": "Accesorios",
+    "image": "https://images.pexels.com/photos/1152077/pexels-photo-1152077.jpeg?auto=compress&cs=tinysrgb&w=300",
+    "icon": "💍",
+    "description": "Joyas y accesorios personales"
+  },
+  {
+    "id": "electronicos",
+    "name": "Electrónicos",
+    "image": "https://images.pexels.com/photos/2047905/pexels-photo-2047905.jpeg?auto=compress&cs=tinysrgb&w=300",
+    "icon": "💻",
+    "description": "Dispositivos electrónicos y tecnología"
+  },
+  {
+    "id": "decoracion",
+    "name": "Decoración",
+    "image": "https://images.pexels.com/photos/5824900/pexels-photo-5824900.jpeg?auto=compress&cs=tinysrgb&w=300",
+    "icon": "🌿",
+    "description": "Artículos decorativos para el hogar"
+  },
+  {
+    "id": "libros",
+    "name": "Libros",
+    "image": "https://images.pexels.com/photos/904620/pexels-photo-904620.jpeg?auto=compress&cs=tinysrgb&w=300",
+    "icon": "📚",
+    "description": "Libros, cuadernos y material educativo"
+  },
+  {
+    "id": "ropa",
+    "name": "Ropa",
+    "image": "https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg?auto=compress&cs=tinysrgb&w=300",
+    "icon": "👕",
+    "description": "Ropa y calzado para todas las edades"
+  },
+  {
+    "id": "juegos",
+    "name": "Juegos",
+    "image": "https://images.pexels.com/photos/735319/pexels-photo-735319.jpeg?auto=compress&cs=tinysrgb&w=300",
+    "icon": "🧩",
+    "description": "Juguetes y juegos de mesa"
+  },
+  {
+    "id": "deportes",
+    "name": "Deportes",
+    "image": "https://images.pexels.com/photos/248547/pexels-photo-248547.jpeg?auto=compress&cs=tinysrgb&w=300",
+    "icon": "⚽",
+    "description": "Equipamiento deportivo y fitness"
+  },
+  {
+    "id": "instrumentos",
+    "name": "Instrumentos",
+    "image": "https://images.pexels.com/photos/164835/pexels-photo-164835.jpeg?auto=compress&cs=tinysrgb&w=300",
+    "icon": "🎸",
+    "description": "Instrumentos musicales y accesorios"
+  }
+]

@@ -1,0 +1,250 @@
+/* --- Layout principal --- */
+.prod-layout {
+  display: grid;
+  grid-template-columns: 1fr 480px; /* izquierda más amplia, mapa más ancho */
+  gap: 40px;
+  align-items: start;
+  padding: 40px 60px; /* más padding general */
+  background: #fcfaef;
+}
+
+/* --- Columna izquierda --- */
+.prod-left {
+  min-width: 0;
+}
+
+.back {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  font-size: 24px;
+  cursor: pointer;
+  margin-bottom: 12px;
+}
+
+/* --- Hero principal --- */
+.prod-hero {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 20px;
+  background: #1f3417;
+  color: #fff;
+  border-radius: 18px;
+  padding: 20px;
+}
+
+.prod-hero__image-ph {
+  width: 100%;
+  aspect-ratio: 16 / 12;
+  border-radius: 12px;
+  background-size: cover;
+  background-position: center;
+}
+
+.prod-hero__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 12px;
+}
+
+.prod-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.prod-mini {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.prod-meta {
+  font-size: 13px;
+  opacity: 0.9;
+  display: grid;
+  gap: 4px;
+}
+
+.prod-thumbs {
+  display: flex;
+  gap: 10px;
+}
+
+.thumb {
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  background-size: cover;
+  background-position: center;
+}
+
+/* --- Secciones de texto --- */
+.section-title {
+  color: #b07a2f;
+  margin: 24px 0 10px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.prod-desc {
+  margin: 0 0 20px;
+  line-height: 1.5;
+}
+
+/* --- Publicado por --- */
+.seller__title {
+  font-weight: 700;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.seller__card {
+  display: grid;
+  grid-template-columns: 52px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 2px solid #1f3417;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.seller__avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.seller__name {
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.seller__stats {
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+.seller__btn {
+  border: 0;
+  background: #f5f0e3;
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* --- Caja de información del trueque --- */
+.info-box {
+  background: #e6be93;
+  border-radius: 14px;
+  padding: 16px 20px;
+  margin-top: 20px;
+}
+
+.info-title {
+  font-weight: 700;
+  margin-bottom: 6px;
+  font-size: 15px;
+}
+
+.info-box ul {
+  margin: 0;
+  padding-left: 18px;
+  line-height: 1.5;
+}
+
+/* --- Columna derecha: Mapa --- */
+.prod-right {
+  position: sticky;
+  top: 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+/* Tarjeta del mapa */
+.map-card {
+  width: 100%;
+  height: 380px; /* más alto */
+  border-radius: 20px;
+  overflow: hidden;
+  border: 4px solid #1f3417;
+  background: #fff;
+  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+}
+
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+}
+
+/* --- Botones debajo del mapa --- */
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.btn-primary {
+  color: #000;
+  font-weight: 700;
+  padding: 12px 24px;
+  border: 0;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary:hover {
+  background: #e6be93;
+}
+
+.btn-ghost {
+  background: #1f3417;
+  color: #fff;
+  font-weight: 700;
+  padding: 12px 24px;
+  border: 0;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-ghost:hover {
+  background: #2e4727;
+}
+/* Agregar al final de ProductDetail.css */
+
+.register-status {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.register-status.loading {
+  background-color: #FFE3B3;
+  color: #8B7355;
+  border: 1px solid #E4A868;
+}
+
+.register-status.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.register-status.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
