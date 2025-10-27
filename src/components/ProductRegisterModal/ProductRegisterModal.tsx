@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import "./ProductRegisterModal.css";
-import type { ProductFormData } from "../../types";
+import type { ProductFormData } from "../../types/types";
 
 interface ProductRegisterModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onRegister: (productData: ProductFormData) => void;
+  onRegister: (productData: ProductFormData) => Promise<void>;
 }
 
 const ProductRegisterModal: React.FC<ProductRegisterModalProps> = ({
@@ -20,6 +20,7 @@ const ProductRegisterModal: React.FC<ProductRegisterModalProps> = ({
     condition: "",
     image: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const categories = [
     "Electrónica",
@@ -51,7 +52,7 @@ const ProductRegisterModal: React.FC<ProductRegisterModalProps> = ({
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // Validar que todos los campos estén llenos
@@ -65,15 +66,15 @@ const ProductRegisterModal: React.FC<ProductRegisterModalProps> = ({
       return;
     }
 
-    onRegister(formData);
-    // Limpiar formulario después de registrar
-    setFormData({
-      name: "",
-      category: "",
-      description: "",
-      condition: "",
-      image: "",
-    });
+    setIsSubmitting(true);
+    try {
+      await onRegister(formData);
+      // El formulario se limpia en el componente padre después del registro exitoso
+    } catch (error) {
+      console.error("Error en el formulario:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleCancel = () => {
@@ -102,6 +103,7 @@ const ProductRegisterModal: React.FC<ProductRegisterModalProps> = ({
             className="back-button"
             onClick={handleBackArrow}
             type="button"
+            disabled={isSubmitting}
           >
             ←
           </button>
@@ -126,6 +128,7 @@ const ProductRegisterModal: React.FC<ProductRegisterModalProps> = ({
                   placeholder="Ej. Bicicleta de montaña"
                   className="form-input"
                   required
+                  disabled={isSubmitting}
                 />
               </div>
 
@@ -140,6 +143,7 @@ const ProductRegisterModal: React.FC<ProductRegisterModalProps> = ({
                   onChange={handleInputChange}
                   className="form-select"
                   required
+                  disabled={isSubmitting}
                 >
                   <option value="">Seleccionar categoría</option>
                   {categories.map((cat) => (
@@ -163,6 +167,7 @@ const ProductRegisterModal: React.FC<ProductRegisterModalProps> = ({
                   placeholder="https://ejemplo.com/imagen.jpg"
                   className="form-input"
                   required
+                  disabled={isSubmitting}
                 />
               </div>
             </div>
@@ -178,10 +183,11 @@ const ProductRegisterModal: React.FC<ProductRegisterModalProps> = ({
                   name="description"
                   value={formData.description}
                   onChange={handleInputChange}
-                  placeholder="Detalles del artículo"
+                  placeholder="Detalles del artículo, características, etc."
                   className="form-textarea"
                   rows={4}
                   required
+                  disabled={isSubmitting}
                 />
               </div>
 
@@ -196,6 +202,7 @@ const ProductRegisterModal: React.FC<ProductRegisterModalProps> = ({
                   onChange={handleInputChange}
                   className="form-select"
                   required
+                  disabled={isSubmitting}
                 >
                   <option value="">selecciona estado</option>
                   {conditions.map((cond) => (
@@ -220,8 +227,8 @@ const ProductRegisterModal: React.FC<ProductRegisterModalProps> = ({
 
           {/* Botón Generar QR */}
           <div className="qr-section">
-            <button type="button" className="qr-button">
-              Generar QR
+            <button type="button" className="qr-button" disabled={isSubmitting}>
+              {isSubmitting ? "Procesando..." : "Generar QR"}
             </button>
           </div>
 
@@ -235,15 +242,17 @@ const ProductRegisterModal: React.FC<ProductRegisterModalProps> = ({
                 !formData.category ||
                 !formData.description ||
                 !formData.condition ||
-                !formData.image
+                !formData.image ||
+                isSubmitting
               }
             >
-              Hacer trueque
+              {isSubmitting ? "Registrando..." : "Hacer trueque"}
             </button>
             <button
               type="button"
               className="action-button cancel-button"
               onClick={handleCancel}
+              disabled={isSubmitting}
             >
               Cancelar
             </button>

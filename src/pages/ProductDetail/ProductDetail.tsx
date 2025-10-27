@@ -16,6 +16,7 @@ export default function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [showRegisterModal, setShowRegisterModal] = useState(false);
+  const [registerStatus, setRegisterStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const { addProduct } = useUserProducts();
 
   const product = products.find((p) => String(p.id) === id);
@@ -45,6 +46,7 @@ export default function ProductDetail() {
   };
 
   const handleRegisterProduct = async (productData: ProductFormData) => {
+    setRegisterStatus("loading");
     try {
       await addProduct({
         title: productData.name,
@@ -54,11 +56,37 @@ export default function ProductDetail() {
         image: productData.image,
         location: "Tu ubicación"
       });
+      
+      setRegisterStatus("success");
       setShowRegisterModal(false);
-      // Opcional: mostrar mensaje de éxito o redirigir
-      console.log("Producto registrado exitosamente");
+      
+      // Mostrar mensaje de éxito
+      setTimeout(() => {
+        setRegisterStatus("idle");
+        // Opcional: redirigir al perfil del usuario
+        // navigate("/perfil");
+      }, 2000);
+      
     } catch (error) {
       console.error("Error al registrar producto:", error);
+      setRegisterStatus("error");
+      
+      setTimeout(() => {
+        setRegisterStatus("idle");
+      }, 3000);
+    }
+  };
+
+  const getRegisterStatusMessage = () => {
+    switch (registerStatus) {
+      case "loading":
+        return "Registrando producto...";
+      case "success":
+        return "¡Producto registrado exitosamente!";
+      case "error":
+        return "Error al registrar el producto. Intenta nuevamente.";
+      default:
+        return "";
     }
   };
 
@@ -174,11 +202,22 @@ export default function ProductDetail() {
 
           {/* Acciones */}
           <div className="actions">
-            <button className="btn-primary" onClick={handleTradeClick}>
-              Hacer trueque
+            <button 
+              className="btn-primary" 
+              onClick={handleTradeClick}
+              disabled={registerStatus === "loading"}
+            >
+              {registerStatus === "loading" ? "Registrando..." : "Hacer trueque"}
             </button>
             <button className="btn-ghost">Reportar</button>
           </div>
+
+          {/* Mensaje de estado del registro */}
+          {registerStatus !== "idle" && (
+            <div className={`register-status ${registerStatus}`}>
+              {getRegisterStatusMessage()}
+            </div>
+          )}
         </section>
 
         {/* Columna derecha: Mapa pequeño */}
