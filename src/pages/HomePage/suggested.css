@@ -84,3 +84,29 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Agregar al final del archivo */
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.no-products {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: #666;
+  background: #f8f9fa;
+  border-radius: 12px;
+  margin: 2rem 0;
+  border: 1px solid #e9ecef;
+}
+
+.no-products p {
+  margin: 0;
+  font-size: 1.1rem;
+}

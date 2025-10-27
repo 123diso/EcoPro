@@ -1,38 +1,54 @@
 import { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import type { Product, DandiPoint, ProductFormData } from "../../types/types";
-import productsRaw from "../../assets/productCards.json";
+import { useAllProducts } from "../../context/AllProductsContext";
+import type { DandiPoint, ProductFormData, Product } from "../../types/types";
 import ProductRegisterModal from "../../components/ProductRegisterModal/ProductRegisterModal";
 import pointsRaw from "../../assets/dandiPoints.json";
+import productCardsData from "../../assets/productCards.json";
 import LeafletMap from "../../components/Map/LeafletMap";
 import SaveButton from "../../components/SaveButton/SaveButton";
 import { useUserProducts } from "../../context/UserProductsContext";
 import "./ProductDetail.css";
-import { createTrade } from "../../services/tradeService";
-import { useAuth } from "../../context/useAuthContext";
-import { createReport } from "../../services/reportService";
-import ReportModal from "../../components/ReportModal/ReportModal"; 
 
-const products: Product[] = productsRaw as Product[];
 const points: DandiPoint[] = pointsRaw as DandiPoint[];
+const exampleProducts: Product[] = productCardsData as unknown as Product[];
 
 export default function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [showRegisterModal, setShowRegisterModal] = useState(false);
-  const [showReportModal, setShowReportModal] = useState(false); 
-  const [registerStatus, setRegisterStatus] = useState<
-    "idle" | "loading" | "success" | "error"
-  >("idle");
+  const [registerStatus, setRegisterStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const { addProduct } = useUserProducts();
-  const { user } = useAuth();
+  const { allProducts, refreshProducts } = useAllProducts();
 
-  const product = products.find((p) => String(p.id) === id);
+  // Buscar producto en productos combinados (ejemplo + reales)
+  const product = useMemo(() => {
+    // Convertir productos de la BD al formato de Product
+    const dbProducts: Product[] = allProducts.map(product => ({
+      id: product.id,
+      title: product.title,
+      category: product.category,
+      condition: product.condition,
+      location: product.location,
+      image: product.image,
+      description: product.description,
+      user_name: product.user_name
+    }));
+
+    // Combinar productos de ejemplo con productos reales
+    const allProductsCombined = [...exampleProducts, ...dbProducts];
+    
+    // Buscar el producto por ID
+    return allProductsCombined.find((p) => String(p.id) === id);
+  }, [allProducts, id]);
 
   const matchedPoint: DandiPoint | null = useMemo(() => {
     if (!product?.location) return null;
     const norm = (s: string) =>
-      s.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
+      s
+        .normalize("NFD")
+        .replace(/\p{Diacritic}/gu, "")
+        .toLowerCase();
     const target = norm(product.location);
     return (
       points.find((p) => target.includes(norm(p.name))) ??
@@ -50,55 +66,32 @@ export default function ProductDetail() {
     setShowRegisterModal(true);
   };
 
-
-  const handleSubmitReport = async (title: string, description: string) => {
-    if (!user || !product?.id) {
-      alert("Debes iniciar sesión para reportar un producto.");
-      return;
-    }
-
-    try {
-      await createReport({
-        product_id: String(product.id),
-        user_id: user.id,
-        title,
-        description,
-      });
-
-      alert("Reporte enviado correctamente.");
-      setShowReportModal(false);
-    } catch (error) {
-      console.error("Error al enviar reporte:", error);
-      alert("Ocurrió un error al enviar el reporte.");
-    }
-  };
-
   const handleRegisterProduct = async (productData: ProductFormData) => {
     setRegisterStatus("loading");
     try {
-      const newProduct = await addProduct({
+      await addProduct({
         title: productData.name,
         category: productData.category,
         description: productData.description,
         condition: productData.condition,
         image: productData.image,
-        location: "Tu ubicación",
+        location: "Tu ubicación"
       });
-
-      if (newProduct?.id && product?.id) {
-        await createTrade(newProduct.id, String(product.id));
-      }
-
+      
+      // Refrescar todos los productos para que aparezca inmediatamente
+      await refreshProducts();
+      
       setRegisterStatus("success");
       setShowRegisterModal(false);
-
+      
       setTimeout(() => {
         setRegisterStatus("idle");
       }, 2000);
+      
     } catch (error) {
-      console.error("Error al registrar producto o crear trueque:", error);
+      console.error("Error al registrar producto:", error);
       setRegisterStatus("error");
-
+      
       setTimeout(() => {
         setRegisterStatus("idle");
       }, 3000);
@@ -110,9 +103,9 @@ export default function ProductDetail() {
       case "loading":
         return "Registrando producto...";
       case "success":
-        return "¡Trueque creado exitosamente!";
+        return "¡Producto registrado exitosamente!";
       case "error":
-        return "Error al registrar el trueque. Intenta nuevamente.";
+        return "Error al registrar el producto. Intenta nuevamente.";
       default:
         return "";
     }
@@ -131,21 +124,18 @@ export default function ProductDetail() {
     );
   }
 
-  const gallery =
-    product.images && product.images.length > 0
-      ? product.images
-      : product.image
-      ? [product.image]
-      : [];
+  const gallery = product.image ? [product.image] : [];
 
   return (
     <>
       <main className="prod-layout">
+        {/* Columna izquierda */}
         <section className="prod-left">
           <button className="back" onClick={() => navigate(-1)}>
             ←
           </button>
 
+          {/* Hero card */}
           <article className="prod-hero">
             <div className="prod-hero__image">
               <div
@@ -159,8 +149,8 @@ export default function ProductDetail() {
             <div className="prod-hero__body">
               <div className="prod-hero__row">
                 <h1 className="prod-title">{product.title}</h1>
-                <SaveButton
-                  id={String(product.id)}
+                <SaveButton 
+                  id={product.id}
                   title={product.title}
                   category={product.category}
                   condition={product.condition}
@@ -178,6 +168,7 @@ export default function ProductDetail() {
                   <div className="prod-loc">{product.location}</div>
                 </div>
 
+                {/* mini-galería */}
                 <div className="prod-thumbs">
                   {gallery.slice(0, 5).map((src, i) => (
                     <div
@@ -191,23 +182,23 @@ export default function ProductDetail() {
             </div>
           </article>
 
+          {/* Detalles */}
           <h2 className="section-title">Detalles</h2>
           <p className="prod-desc">
-            {product.description ??
-              "Descripción no disponible. Este artículo se ofrece para trueque en la ubicación indicada."}
+            {product.description || "Descripción no disponible. Este artículo se ofrece para trueque en la ubicación indicada."}
           </p>
 
+          {/* Publicado por */}
           <div className="seller">
             <div className="seller__title">Publicado por:</div>
             <div className="seller__card">
               <img className="seller__avatar" src="/avatars/default.png" alt="" />
               <div className="seller__info">
                 <div className="seller__name">
-                  {product.sellerName ?? "Usuario Dandi"}
+                  {(product as any).user_name || "Usuario Dandi"}
                 </div>
                 <div className="seller__stats">
-                  {product.sellerRating ?? "★ 4.5/5"} •{" "}
-                  {product.sellerStats ?? "14+ trueques"}
+                  Miembro de Dandi
                 </div>
               </div>
               <button className="seller__btn" aria-label="Contactar">
@@ -216,6 +207,7 @@ export default function ProductDetail() {
             </div>
           </div>
 
+          {/* Información del trueque */}
           <div className="info-box">
             <div className="info-title">Información del trueque</div>
             <ul>
@@ -229,26 +221,19 @@ export default function ProductDetail() {
             </ul>
           </div>
 
+          {/* Acciones */}
           <div className="actions">
-            <button
-              className="btn-primary"
+            <button 
+              className="btn-primary" 
               onClick={handleTradeClick}
               disabled={registerStatus === "loading"}
             >
-              {registerStatus === "loading"
-                ? "Registrando..."
-                : "Hacer trueque"}
+              {registerStatus === "loading" ? "Registrando..." : "Hacer trueque"}
             </button>
-
-            {/*  BOTÓN DE REPORTAR */}
-            <button
-              className="btn-ghost"
-              onClick={() => setShowReportModal(true)}
-            >
-              Reportar
-            </button>
+            <button className="btn-ghost">Reportar</button>
           </div>
 
+          {/* Mensaje de estado del registro */}
           {registerStatus !== "idle" && (
             <div className={`register-status ${registerStatus}`}>
               {getRegisterStatusMessage()}
@@ -256,6 +241,7 @@ export default function ProductDetail() {
           )}
         </section>
 
+        {/* Columna derecha: Mapa pequeño */}
         <section className="prod-right">
           <div className="map-card">
             <LeafletMap
@@ -272,18 +258,11 @@ export default function ProductDetail() {
         </section>
       </main>
 
-      {/*  Modal de registro de producto */}
+      {/* Modal de registro de producto */}
       <ProductRegisterModal
         isOpen={showRegisterModal}
         onClose={() => setShowRegisterModal(false)}
         onRegister={handleRegisterProduct}
-      />
-
-      {/*  Modal de reporte */}
-      <ReportModal
-        isOpen={showReportModal}
-        onClose={() => setShowReportModal(false)}
-        onSubmit={handleSubmitReport}
       />
     </>
   );

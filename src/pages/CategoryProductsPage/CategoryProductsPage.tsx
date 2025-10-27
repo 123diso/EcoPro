@@ -1,17 +1,20 @@
 import React, { useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ProductsGrid from "../../components/ProductsGrid/ProductsGrid";
-import type { Product } from "../../components/ProductsGrid/ProductsGrid";
-import productsData from "../../assets/productCards.json";
+import { useAllProducts } from "../../context/AllProductsContext";
+import type { Product } from "../../types/types";
 import categoriesData from "../../assets/categories.json";
+import productCardsData from "../../assets/productCards.json";
 import "./CategoryProductsPage.css";
+
+const exampleProducts: Product[] = productCardsData as unknown as Product[];
 
 const CategoryProductsPage: React.FC = () => {
   const { categoryId } = useParams<{ categoryId: string }>();
   const navigate = useNavigate();
+  const { allProducts, loading } = useAllProducts();
 
-  // Cargar productos y categorías desde archivos JSON
-  const allProducts: Product[] = productsData as Product[];
+  // Cargar categorías desde archivos JSON
   const categories = categoriesData;
 
   // Encontrar la categoría actual
@@ -19,10 +22,26 @@ const CategoryProductsPage: React.FC = () => {
     return categories.find(cat => cat.id === categoryId);
   }, [categoryId, categories]);
 
-  // Filtrar productos por categoría
-  const categoryProducts = useMemo(() => {
+  // Combinar productos de ejemplo con productos reales y filtrar por categoría
+  const categoryProducts = useMemo((): Product[] => {
     if (!categoryId || !currentCategory) return [];
-    return allProducts.filter(product => 
+    
+    // Convertir productos de la BD al formato de Product
+    const dbProducts: Product[] = allProducts.map(product => ({
+      id: product.id,
+      title: product.title,
+      category: product.category,
+      condition: product.condition,
+      location: product.location,
+      image: product.image,
+      description: product.description
+    }));
+
+    // Combinar productos de ejemplo con productos reales
+    const allProductsCombined = [...exampleProducts, ...dbProducts];
+    
+    // Filtrar por categoría
+    return allProductsCombined.filter(product => 
       product.category.toLowerCase() === currentCategory.name.toLowerCase()
     );
   }, [categoryId, currentCategory, allProducts]);
@@ -35,6 +54,16 @@ const CategoryProductsPage: React.FC = () => {
         <button onClick={() => navigate("/categorias")} className="back-button">
           Volver a categorías
         </button>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="category-products-page">
+        <div className="loading-container">
+          <p>Cargando productos...</p>
+        </div>
       </div>
     );
   }

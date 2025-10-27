@@ -2,17 +2,7 @@ import React, { useMemo, useState } from "react";
 import ProductCard from "../ProductCard/ProductCard";
 import SearchBar from "../SearchBar/SearchBar";
 import "./ProductsGrid.css";
-
-export interface Product {
-  id: number;
-  title: string;
-  category: string;
-  condition: string;
-  location: string;
-  image?: string;
-  price?: string;
-  user?: string;
-}
+import type { Product } from "../../types/types";
 
 interface ProductsGridProps {
   products: Product[];
