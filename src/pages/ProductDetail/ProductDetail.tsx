@@ -8,6 +8,10 @@ import LeafletMap from "../../components/Map/LeafletMap";
 import SaveButton from "../../components/SaveButton/SaveButton";
 import { useUserProducts } from "../../context/UserProductsContext";
 import "./ProductDetail.css";
+import { createTrade } from "../../services/tradeService";
+import { useAuth } from "../../context/useAuthContext";
+import { createReport } from "../../services/reportService";
+import ReportModal from "../../components/ReportModal/ReportModal"; 
 
 const products: Product[] = productsRaw as Product[];
 const points: DandiPoint[] = pointsRaw as DandiPoint[];
@@ -16,18 +20,19 @@ export default function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [showRegisterModal, setShowRegisterModal] = useState(false);
-  const [registerStatus, setRegisterStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [showReportModal, setShowReportModal] = useState(false); 
+  const [registerStatus, setRegisterStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
   const { addProduct } = useUserProducts();
+  const { user } = useAuth();
 
   const product = products.find((p) => String(p.id) === id);
 
   const matchedPoint: DandiPoint | null = useMemo(() => {
     if (!product?.location) return null;
     const norm = (s: string) =>
-      s
-        .normalize("NFD")
-        .replace(/\p{Diacritic}/gu, "")
-        .toLowerCase();
+      s.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
     const target = norm(product.location);
     return (
       points.find((p) => target.includes(norm(p.name))) ??
@@ -45,32 +50,55 @@ export default function ProductDetail() {
     setShowRegisterModal(true);
   };
 
+
+  const handleSubmitReport = async (title: string, description: string) => {
+    if (!user || !product?.id) {
+      alert("Debes iniciar sesión para reportar un producto.");
+      return;
+    }
+
+    try {
+      await createReport({
+        product_id: String(product.id),
+        user_id: user.id,
+        title,
+        description,
+      });
+
+      alert("Reporte enviado correctamente.");
+      setShowReportModal(false);
+    } catch (error) {
+      console.error("Error al enviar reporte:", error);
+      alert("Ocurrió un error al enviar el reporte.");
+    }
+  };
+
   const handleRegisterProduct = async (productData: ProductFormData) => {
     setRegisterStatus("loading");
     try {
-      await addProduct({
+      const newProduct = await addProduct({
         title: productData.name,
         category: productData.category,
         description: productData.description,
         condition: productData.condition,
         image: productData.image,
-        location: "Tu ubicación"
+        location: "Tu ubicación",
       });
-      
+
+      if (newProduct?.id && product?.id) {
+        await createTrade(newProduct.id, String(product.id));
+      }
+
       setRegisterStatus("success");
       setShowRegisterModal(false);
-      
-      // Mostrar mensaje de éxito
+
       setTimeout(() => {
         setRegisterStatus("idle");
-        // Opcional: redirigir al perfil del usuario
-        // navigate("/perfil");
       }, 2000);
-      
     } catch (error) {
-      console.error("Error al registrar producto:", error);
+      console.error("Error al registrar producto o crear trueque:", error);
       setRegisterStatus("error");
-      
+
       setTimeout(() => {
         setRegisterStatus("idle");
       }, 3000);
@@ -82,9 +110,9 @@ export default function ProductDetail() {
       case "loading":
         return "Registrando producto...";
       case "success":
-        return "¡Producto registrado exitosamente!";
+        return "¡Trueque creado exitosamente!";
       case "error":
-        return "Error al registrar el producto. Intenta nuevamente.";
+        return "Error al registrar el trueque. Intenta nuevamente.";
       default:
         return "";
     }
@@ -113,13 +141,11 @@ export default function ProductDetail() {
   return (
     <>
       <main className="prod-layout">
-        {/* Columna izquierda */}
         <section className="prod-left">
           <button className="back" onClick={() => navigate(-1)}>
             ←
           </button>
 
-          {/* Hero card */}
           <article className="prod-hero">
             <div className="prod-hero__image">
               <div
@@ -133,7 +159,14 @@ export default function ProductDetail() {
             <div className="prod-hero__body">
               <div className="prod-hero__row">
                 <h1 className="prod-title">{product.title}</h1>
-                <SaveButton />
+                <SaveButton
+                  id={String(product.id)}
+                  title={product.title}
+                  category={product.category}
+                  condition={product.condition}
+                  location={product.location}
+                  image={product.image}
+                />
               </div>
 
               <div className="prod-mini">
@@ -145,7 +178,6 @@ export default function ProductDetail() {
                   <div className="prod-loc">{product.location}</div>
                 </div>
 
-                {/* mini-galería */}
                 <div className="prod-thumbs">
                   {gallery.slice(0, 5).map((src, i) => (
                     <div
@@ -159,14 +191,12 @@ export default function ProductDetail() {
             </div>
           </article>
 
-          {/* Detalles */}
           <h2 className="section-title">Detalles</h2>
           <p className="prod-desc">
             {product.description ??
               "Descripción no disponible. Este artículo se ofrece para trueque en la ubicación indicada."}
           </p>
 
-          {/* Publicado por */}
           <div className="seller">
             <div className="seller__title">Publicado por:</div>
             <div className="seller__card">
@@ -186,7 +216,6 @@ export default function ProductDetail() {
             </div>
           </div>
 
-          {/* Información del trueque */}
           <div className="info-box">
             <div className="info-title">Información del trueque</div>
             <ul>
@@ -200,19 +229,26 @@ export default function ProductDetail() {
             </ul>
           </div>
 
-          {/* Acciones */}
           <div className="actions">
-            <button 
-              className="btn-primary" 
+            <button
+              className="btn-primary"
               onClick={handleTradeClick}
               disabled={registerStatus === "loading"}
             >
-              {registerStatus === "loading" ? "Registrando..." : "Hacer trueque"}
+              {registerStatus === "loading"
+                ? "Registrando..."
+                : "Hacer trueque"}
             </button>
-            <button className="btn-ghost">Reportar</button>
+
+            {/*  BOTÓN DE REPORTAR */}
+            <button
+              className="btn-ghost"
+              onClick={() => setShowReportModal(true)}
+            >
+              Reportar
+            </button>
           </div>
 
-          {/* Mensaje de estado del registro */}
           {registerStatus !== "idle" && (
             <div className={`register-status ${registerStatus}`}>
               {getRegisterStatusMessage()}
@@ -220,7 +256,6 @@ export default function ProductDetail() {
           )}
         </section>
 
-        {/* Columna derecha: Mapa pequeño */}
         <section className="prod-right">
           <div className="map-card">
             <LeafletMap
@@ -237,11 +272,18 @@ export default function ProductDetail() {
         </section>
       </main>
 
-      {/* Modal de registro de producto */}
+      {/*  Modal de registro de producto */}
       <ProductRegisterModal
         isOpen={showRegisterModal}
         onClose={() => setShowRegisterModal(false)}
         onRegister={handleRegisterProduct}
+      />
+
+      {/*  Modal de reporte */}
+      <ReportModal
+        isOpen={showReportModal}
+        onClose={() => setShowReportModal(false)}
+        onSubmit={handleSubmitReport}
       />
     </>
   );

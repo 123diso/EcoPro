@@ -2,16 +2,16 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/useAuthContext";
 import { useSaved } from "../../context/SavedContext";
-import { useUserProducts } from "../../context/UserProductsContext"; // ← Nuevo import
+import { useUserProducts } from "../../context/UserProductsContext";
 import ProductCard from "../../components/ProductCard/ProductCard";
 import "./ProfilePage.css";
 
 export const ProfilePage: React.FC = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<"guardados" | "posts">("posts"); // ← Cambiar a "posts" por defecto
+  const [activeTab, setActiveTab] = useState<"guardados" | "posts">("posts");
   const { saved } = useSaved();
-  const { userProducts, fetchUserProducts } = useUserProducts(); // ← Usar el nuevo contexto
+  const { userProducts, fetchUserProducts } = useUserProducts();
 
   useEffect(() => {
     fetchUserProducts();
@@ -30,12 +30,10 @@ export const ProfilePage: React.FC = () => {
   return (
     <div className="profile-page">
       <div className="profile-content">
-        {/* Banner */}
         <div className="profile-banner">
           <div className="banner-image"></div>
         </div>
 
-        {/* Profile Info */}
         <div className="profile-info">
           <div className="profile-picture">
             <div className="avatar-large">
@@ -75,7 +73,6 @@ export const ProfilePage: React.FC = () => {
           </div>
         </div>
 
-        {/* Tabs */}
         <div className="posts-section">
           <div className="posts-header">
             <h2 className="posts-title">Perfil</h2>
@@ -137,6 +134,17 @@ export const ProfilePage: React.FC = () => {
             </div>
           )}
         </div>
+
+        {user && (
+          <div className="admin-access">
+            <button
+              className="admin-button"
+              onClick={() => navigate("/admin")}
+            >
+              Ir al panel de administrador
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

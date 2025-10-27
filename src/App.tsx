@@ -1,4 +1,3 @@
-// App.tsx
 import React from "react";
 import {
   createBrowserRouter,
@@ -18,12 +17,16 @@ import SettingsPage from "./pages/SettingsPage/SettingsPage";
 import NotificationsPage from "./pages/NotificationsPage/NotificationsPage";
 import CategoriesPage from "./pages/CategoriesPage/CategoriesPage";
 import CategoryProductsPage from "./pages/CategoryProductsPage/CategoryProductsPage";
+import ProductDetail from "./pages/ProductDetail/ProductDetail";
+
 import { AuthProvider } from "./context/AuthContextProvider";
 import { useAuth } from "./context/useAuthContext";
 import { SavedProvider } from "./context/SavedContext";
 import { UserProductsProvider } from "./context/UserProductsContext";
 import { SettingsProvider } from "./context/SettingsContext";
-import ProductDetail from "./pages/ProductDetail/ProductDetail";
+
+import AdminDashboard from "./pages/AdminDashboard/AdminDashboard";
+
 import "./App.css";
 
 /* ---------- Layout autenticado ---------- */
@@ -33,7 +36,6 @@ const Layout: React.FC = () => (
       <AuthProvider>
         <SettingsProvider>
           <Navbar />
-          
           <Outlet />
         </SettingsProvider>
       </AuthProvider>
@@ -90,6 +92,7 @@ const router = createBrowserRouter([
       { path: "configuracion", element: <SettingsPage /> },
       { path: "producto/:id", element: <ProductDetail /> },
       { path: "notificaciones", element: <NotificationsPage /> },
+      { path: "admin", element: <AdminDashboard /> },
       { path: "*", element: <Navigate to="/" replace /> },
     ],
   },

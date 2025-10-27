@@ -32,6 +32,7 @@ export interface SuggestedCardProps {
   showName?: boolean;
 }
 
+
 // Tipos para datos de la aplicación
 export interface Product {
   id: number | string;
@@ -145,3 +146,15 @@ export interface SavedProduct {
   condition?: string;
   location?: string;
 }
+
+// Trades
+
+export interface Trade {
+  id: string;
+  product_offer_id: string;
+  product_receive_id: string;
+  status: "pending" | "accepted" | "rejected" | "completed";
+  created_at?: string;
+  updated_at?: string;
+}
+

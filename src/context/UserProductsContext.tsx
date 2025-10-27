@@ -17,14 +17,20 @@ export interface UserProduct {
 interface UserProductsContextType {
   userProducts: UserProduct[];
   loading: boolean;
-  addProduct: (product: Omit<UserProduct, 'id' | 'created_at' | 'user_id' | 'updated_at'>) => Promise<void>;
+  addProduct: (
+    product: Omit<UserProduct, "id" | "created_at" | "user_id" | "updated_at">
+  ) => Promise<UserProduct>;
   fetchUserProducts: () => Promise<void>;
   deleteProduct: (productId: string) => Promise<void>;
 }
 
-const UserProductsContext = createContext<UserProductsContextType | undefined>(undefined);
+const UserProductsContext = createContext<UserProductsContextType | undefined>(
+  undefined
+);
 
-export const UserProductsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const UserProductsProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [userProducts, setUserProducts] = useState<UserProduct[]>([]);
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
@@ -34,95 +40,105 @@ export const UserProductsProvider: React.FC<{ children: React.ReactNode }> = ({ 
       setUserProducts([]);
       return;
     }
-    
+
     setLoading(true);
     try {
       const { data, error } = await supabase
-        .from('user_posts')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
+        .from("user_posts")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
 
-      if (error) {
-        console.error('Error fetching user products:', error);
-        throw error;
-      }
-      
+      if (error) throw error;
       setUserProducts(data || []);
     } catch (error) {
-      console.error('Error in fetchUserProducts:', error);
+      console.error("Error al obtener productos:", error);
       setUserProducts([]);
     } finally {
       setLoading(false);
     }
   }, [user]);
 
-  const addProduct = useCallback(async (productData: Omit<UserProduct, 'id' | 'created_at' | 'user_id' | 'updated_at'>) => {
-    if (!user) throw new Error('User must be logged in');
+  const addProduct = useCallback(
+  async (
+    productData: Omit<UserProduct, "id" | "created_at" | "user_id" | "updated_at">
+  ) => {
+    if (!user) throw new Error("User must be logged in");
 
     setLoading(true);
     try {
+      const cleanData = {
+        title: productData.title?.trim() || "Sin título",
+        category: productData.category?.trim() || "Sin categoría",
+        condition: productData.condition?.trim() || "Sin condición",
+        description: productData.description?.trim() || "Sin descripción",
+        location: productData.location?.trim() || "Desconocido",
+        image: productData.image?.trim() || null,
+        user_id: user.id,
+      };
+
       const { data, error } = await supabase
-        .from('user_posts')
-        .insert([
-          {
-            ...productData,
-            user_id: user.id,
-          }
-        ])
+        .from("user_posts")
+        .insert([cleanData])
         .select()
         .single();
 
       if (error) {
-        console.error('Error adding product:', error);
+        console.error("Error adding product:", error);
         throw error;
       }
 
-      // Agregar el nuevo producto al estado local
-      if (data) {
-        setUserProducts(prev => [data, ...prev]);
-      }
+      if (data) setUserProducts((prev) => [data, ...prev]);
 
       return data;
     } catch (error) {
-      console.error('Error in addProduct:', error);
+      console.error("Error in addProduct:", error);
       throw error;
     } finally {
       setLoading(false);
     }
-  }, [user]);
+  },
+  [user]
+  );
 
-  const deleteProduct = useCallback(async (productId: string) => {
-    if (!user) throw new Error('User must be logged in');
 
-    setLoading(true);
-    try {
-      const { error } = await supabase
-        .from('user_posts')
-        .delete()
-        .eq('id', productId)
-        .eq('user_id', user.id);
+  const deleteProduct = useCallback(
+    async (productId: string) => {
+      if (!user) throw new Error("El usuario debe iniciar sesión.");
 
-      if (error) throw error;
+      setLoading(true);
+      try {
+        const { error } = await supabase
+          .from("user_posts")
+          .delete()
+          .eq("id", productId)
+          .eq("user_id", user.id);
 
-      // Remover el producto del estado local
-      setUserProducts(prev => prev.filter(product => product.id !== productId));
-    } catch (error) {
-      console.error('Error deleting product:', error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  }, [user]);
+        if (error) throw error;
+
+        setUserProducts((prev) =>
+          prev.filter((product) => product.id !== productId)
+        );
+      } catch (error) {
+        console.error("Error al eliminar producto:", error);
+        throw error;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [user]
+  );
 
   return (
-    <UserProductsContext.Provider value={{
-      userProducts,
-      loading,
-      addProduct,
-      fetchUserProducts,
-      deleteProduct
-    }}>
+    <UserProductsContext.Provider
+      value={{
+        userProducts,
+        loading,
+        addProduct,
+        fetchUserProducts,
+        deleteProduct,
+      }}
+    >
       {children}
     </UserProductsContext.Provider>
   );
@@ -131,7 +147,9 @@ export const UserProductsProvider: React.FC<{ children: React.ReactNode }> = ({ 
 export const useUserProducts = () => {
   const context = useContext(UserProductsContext);
   if (context === undefined) {
-    throw new Error('useUserProducts must be used within a UserProductsProvider');
+    throw new Error(
+      "useUserProducts debe usarse dentro de un UserProductsProvider"
+    );
   }
   return context;
 };

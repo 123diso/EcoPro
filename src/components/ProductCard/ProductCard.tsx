@@ -3,14 +3,15 @@ import { useNavigate } from "react-router-dom";
 import "./ProductCard.css";
 import SaveButton from "../SaveButton/SaveButton";
 
-type ProductCardProps = {
+interface ProductCardProps {
   id: number | string;
   title: string;
   category: string;
   condition: string;
   location: string;
   image?: string;
-};
+  onDelete?: (id: string | number) => void;
+}
 
 const ProductCard: React.FC<ProductCardProps> = ({
   id,
@@ -19,11 +20,17 @@ const ProductCard: React.FC<ProductCardProps> = ({
   condition,
   location,
   image,
+  onDelete,
 }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/producto/${id}`);
+    if (!onDelete) navigate(`/producto/${id}`);
+  };
+
+  const handleDeleteClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    if (onDelete) onDelete(id);
   };
 
   return (
@@ -34,8 +41,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
           style={{
             backgroundImage: image ? `url(${image})` : "none",
             backgroundColor: image ? "transparent" : "#e9e6dc",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
           }}
-        ></div>
+        />
       </div>
 
       <div className="product-card__content">
@@ -47,16 +56,23 @@ const ProductCard: React.FC<ProductCardProps> = ({
         </div>
       </div>
 
-      <SaveButton
-        id={id}
-        title={title}
-        image={image}
-        category={category}
-        condition={condition}
-        location={location}
-      />
+      {onDelete ? (
+        <button className="delete-button" onClick={handleDeleteClick}>
+          Eliminar
+        </button>
+      ) : (
+        <SaveButton
+          id={id}
+          title={title}
+          image={image || ""}
+          category={category}
+          condition={condition}
+          location={location}
+        />
+      )}
     </div>
   );
 };
+
 
 export default ProductCard;

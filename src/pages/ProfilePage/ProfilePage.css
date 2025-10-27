@@ -280,3 +280,24 @@
     grid-template-columns: 1fr;
   }
 }
+
+.admin-access {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.admin-button {
+  background-color: #2f3e2f;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 22px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.admin-button:hover {
+  background-color: #1f2a1f;
+}

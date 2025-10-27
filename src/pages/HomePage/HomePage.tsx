@@ -11,24 +11,28 @@ import tradesItemsData from "../../assets/tradesItems.json";
 import productCardsData from "../../assets/productCards.json";
 import "./suggested.css";
 
+
 const suggestedItems: CardItem[] = suggestedItemsData;
 const tradesItems: CardItem[] = tradesItemsData;
 
-// Tipo local para los productos de la tarjeta
-type Product = {
+
+interface ProductData {
   id: number;
   title: string;
   category: string;
   condition: string;
   location: string;
   image?: string;
-};
+}
 
-const products: Product[] = productCardsData as unknown as Product[];
+
+const products: ProductData[] = productCardsData as unknown as ProductData[];
+
 
 const HomePage: React.FC = () => {
   const [query, setQuery] = useState("");
 
+  // Filtros de búsqueda
   const filteredSuggested = useMemo(
     () =>
       suggestedItems.filter((i) =>
@@ -45,7 +49,6 @@ const HomePage: React.FC = () => {
     [query]
   );
 
-  // Productos “Según tus intereses”
   const filteredProducts = useMemo(
     () =>
       products.filter((p) =>
@@ -57,7 +60,6 @@ const HomePage: React.FC = () => {
   return (
     <main style={{ padding: 24 }}>
       <SearchBar onSearch={setQuery} placeholder="Buscar por nombre..." />
-
       <HeroBanner />
 
       {/* Sugeridos */}
@@ -66,6 +68,7 @@ const HomePage: React.FC = () => {
           <h2 className="suggested__title">Sugeridos de hoy</h2>
           <Button to="/sugeridos">Ver más</Button>
         </header>
+
         <div className="suggested__row">
           {filteredSuggested.map(({ id, name, image }) => (
             <SuggestedCard key={id} name={name} image={image} />
@@ -79,6 +82,7 @@ const HomePage: React.FC = () => {
           <h2 className="suggested__title">Trueques cerca de ti</h2>
           <Button to="/trueques">Ver más</Button>
         </header>
+
         <div className="suggested__row">
           {filteredTrades.map(({ id, name, image }) => (
             <SuggestedCard key={id} name={name} image={image} />
@@ -86,7 +90,7 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Según tus intereses */}
+      {/* Productos */}
       <section className="products-section">
         <header className="products-section__header">
           <h2 className="suggested__title">Según tus intereses</h2>
@@ -94,21 +98,20 @@ const HomePage: React.FC = () => {
         </header>
 
         <div className="products-section__list">
-          {filteredProducts.map((product: Product) => (
+          {filteredProducts.map((p) => (
             <ProductCard
-              key={product.id}
-              id={product.id}
-              title={product.title}
-              category={product.category}
-              condition={product.condition}
-              location={product.location}
-              image={product.image}
+              key={p.id}
+              id={p.id}
+              title={p.title}
+              category={p.category}
+              condition={p.condition}
+              location={p.location}
+              image={p.image}
             />
           ))}
         </div>
       </section>
 
-      {/* Banner del Mapa */}
       <MapBanner />
     </main>
   );
