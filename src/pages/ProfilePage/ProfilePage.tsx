@@ -43,7 +43,7 @@ export const ProfilePage: React.FC = () => {
         description: productData.description,
         condition: productData.condition,
         image: productData.image,
-        location: "Tu ubicación"
+        location: productData.location
       });
       
       // Refrescar todos los productos para que aparezca inmediatamente en toda la app

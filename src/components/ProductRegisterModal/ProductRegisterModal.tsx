@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./ProductRegisterModal.css";
 import type { ProductFormData } from "../../types/types";
+import dandiPointsData from "../../assets/dandiPoints.json";
 
 interface ProductRegisterModalProps {
   isOpen: boolean;
@@ -19,6 +20,7 @@ const ProductRegisterModal: React.FC<ProductRegisterModalProps> = ({
     description: "",
     condition: "",
     image: "",
+    location: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -61,7 +63,8 @@ const ProductRegisterModal: React.FC<ProductRegisterModalProps> = ({
       !formData.category ||
       !formData.description ||
       !formData.condition ||
-      !formData.image
+      !formData.image ||
+      !formData.location
     ) {
       return;
     }
@@ -84,6 +87,7 @@ const ProductRegisterModal: React.FC<ProductRegisterModalProps> = ({
       description: "",
       condition: "",
       image: "",
+      location: "",
     });
     onClose();
   };
@@ -212,6 +216,28 @@ const ProductRegisterModal: React.FC<ProductRegisterModalProps> = ({
                   ))}
                 </select>
               </div>
+
+              <div className="form-group">
+                <label htmlFor="location" className="form-label">
+                  Tienda
+                </label>
+                <select
+                  id="location"
+                  name="location"
+                  value={formData.location}
+                  onChange={handleInputChange}
+                  className="form-select"
+                  required
+                  disabled={isSubmitting}
+                >
+                  <option value="">Seleccionar tienda</option>
+                  {dandiPointsData.map((store) => (
+                    <option key={store.id} value={store.name}>
+                      {store.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
 
@@ -243,6 +269,7 @@ const ProductRegisterModal: React.FC<ProductRegisterModalProps> = ({
                 !formData.description ||
                 !formData.condition ||
                 !formData.image ||
+                !formData.location ||
                 isSubmitting
               }
             >

@@ -89,6 +89,16 @@ const HomePage: React.FC = () => {
     }));
   }, [allProducts]);
 
+  // Productos de la semana - productos creados en los últimos 30 días
+  const weeklyProducts = useMemo(() => {
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setDate(oneMonthAgo.getDate() - 30);
+
+    return allProducts
+      .filter(product => product.created_at && new Date(product.created_at) >= oneMonthAgo)
+      .slice(0, 6); // Mostrar máximo 6 productos
+  }, [allProducts]);
+
   if (loading) {
     return (
       <main style={{ padding: 24 }}>
@@ -154,6 +164,30 @@ const HomePage: React.FC = () => {
           ))}
         </div>
       </section>
+
+      {/* Productos añadidos esta semana */}
+      {weeklyProducts.length > 0 && (
+        <section className="products-section">
+          <header className="products-section__header">
+            <h2 className="suggested__title">🆕 Productos de esta semana</h2>
+            <Button to="/categorias">Ver más →</Button>
+          </header>
+
+          <div className="products-section__list">
+            {weeklyProducts.map((product) => (
+              <ProductCard
+                key={product.id}
+                id={product.id}
+                title={product.title}
+                category={product.category}
+                condition={product.condition}
+                location={product.location}
+                image={product.image}
+              />
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Productos disponibles */}
       <section className="products-section">

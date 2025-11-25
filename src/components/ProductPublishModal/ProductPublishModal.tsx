@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./ProductPublishModal.css";
 import type { ProductFormData } from "../../types/types";
+import dandiPointsData from "../../assets/dandiPoints.json";
 
 interface ProductPublishModalProps {
   isOpen: boolean;
@@ -19,6 +20,7 @@ const ProductPublishModal: React.FC<ProductPublishModalProps> = ({
     description: "",
     condition: "",
     image: "",
+    location: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -61,7 +63,8 @@ const ProductPublishModal: React.FC<ProductPublishModalProps> = ({
       !formData.category ||
       !formData.description ||
       !formData.condition ||
-      !formData.image
+      !formData.image ||
+      !formData.location
     ) {
       return;
     }
@@ -76,6 +79,7 @@ const ProductPublishModal: React.FC<ProductPublishModalProps> = ({
         description: "",
         condition: "",
         image: "",
+        location: "",
       });
     } catch (error) {
       console.error("Error en el formulario:", error);
@@ -91,6 +95,7 @@ const ProductPublishModal: React.FC<ProductPublishModalProps> = ({
       description: "",
       condition: "",
       image: "",
+      location: "",
     });
     onClose();
   };
@@ -222,6 +227,28 @@ const ProductPublishModal: React.FC<ProductPublishModalProps> = ({
                   ))}
                 </select>
               </div>
+
+              <div className="publish-form-group">
+                <label htmlFor="location" className="publish-form-label">
+                  Tienda *
+                </label>
+                <select
+                  id="location"
+                  name="location"
+                  value={formData.location}
+                  onChange={handleInputChange}
+                  className="publish-form-select"
+                  required
+                  disabled={isSubmitting}
+                >
+                  <option value="">Seleccionar tienda</option>
+                  {dandiPointsData.map((store) => (
+                    <option key={store.id} value={store.name}>
+                      {store.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
 
@@ -257,6 +284,7 @@ const ProductPublishModal: React.FC<ProductPublishModalProps> = ({
                 !formData.description ||
                 !formData.condition ||
                 !formData.image ||
+                !formData.location ||
                 isSubmitting
               }
             >

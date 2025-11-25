@@ -104,6 +104,7 @@ export interface ProductFormData {
   description: string;
   condition: string;
   image: string;
+  location: string;
 }
 
 export interface AuthFormData {
