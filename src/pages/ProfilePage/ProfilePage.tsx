@@ -29,7 +29,6 @@ export const ProfilePage: React.FC = () => {
   };
 
   const handleEdit = () => {};
-  const handleMessage = () => {};
 
   const handleCreatePost = () => {
     setShowPublishModal(true);
