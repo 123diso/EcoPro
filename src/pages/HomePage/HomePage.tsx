@@ -46,7 +46,8 @@ const HomePage: React.FC = () => {
       condition: product.condition,
       location: product.location,
       image: product.image,
-      description: product.description
+      description: product.description,
+      created_at: product.created_at
     }));
 
     // Combinar y eliminar duplicados (por título)
@@ -66,9 +67,27 @@ const HomePage: React.FC = () => {
           p.title.toLowerCase().includes(query.toLowerCase()) ||
           p.category.toLowerCase().includes(query.toLowerCase())
         )
-        .slice(0, 8), // Mostrar solo los 8 más recientes
+        .slice(0, 8),
     [combinedProducts, query]
   );
+
+  // Productos recién publicados (últimos 6 productos de la base de datos)
+  const recentProducts = useMemo(() => {
+    // Ordenar productos por fecha de creación (más recientes primero)
+    const sortedProducts = [...allProducts]
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+      .slice(0, 6); // Tomar los 6 más recientes
+
+    return sortedProducts.map(product => ({
+      id: product.id,
+      title: product.title,
+      category: product.category,
+      condition: product.condition,
+      location: product.location,
+      image: product.image,
+      user_name: product.user_name
+    }));
+  }, [allProducts]);
 
   if (loading) {
     return (
@@ -85,6 +104,30 @@ const HomePage: React.FC = () => {
       <SearchBar onSearch={setQuery} placeholder="Buscar por nombre..." />
 
       <HeroBanner />
+
+      {/* Productos recién publicados */}
+      {recentProducts.length > 0 && (
+        <section className="products-section">
+          <header className="products-section__header">
+            <h2 className="suggested__title">📦 Productos recién publicados</h2>
+            <Button to="/categorias">Ver más →</Button>
+          </header>
+
+          <div className="products-section__list">
+            {recentProducts.map((product) => (
+              <ProductCard
+                key={product.id}
+                id={product.id}
+                title={product.title}
+                category={product.category}
+                condition={product.condition}
+                location={product.location}
+                image={product.image}
+              />
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Sugeridos */}
       <section className="suggested">
@@ -112,7 +155,7 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Según tus intereses - Productos combinados (ejemplo + reales) */}
+      {/* Productos disponibles */}
       <section className="products-section">
         <header className="products-section__header">
           <h2 className="suggested__title">Productos disponibles</h2>
