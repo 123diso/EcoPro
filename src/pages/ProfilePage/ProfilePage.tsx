@@ -114,6 +114,13 @@ export const ProfilePage: React.FC = () => {
               <button onClick={handleEdit} className="action-button edit">
                 Editar
               </button>
+              
+              <button
+                  onClick={() => navigate("/admin")}
+                  className="action-button admin"
+              >
+                  Administración
+              </button>
             </div>
           </div>
 

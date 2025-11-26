@@ -26,6 +26,9 @@ import { SettingsProvider } from "./context/SettingsContext";
 import { AllProductsProvider } from "./context/AllProductsContext";
 import ProductDetail from "./pages/ProductDetail/ProductDetail";
 import "./App.css";
+import TradeDetails from "./pages/Trades/TradeDetails";
+import TradeConfirm from "./pages/Trades/TradeConfirm";
+import AdminDashboard from "./pages/AdminDashboard/AdminDashboard";
 
 /* ---------- Layout autenticado ---------- */
 const Layout: React.FC = () => (
@@ -77,23 +80,28 @@ const router = createBrowserRouter([
   { path: "/register", element: <PublicRegister /> },
 
   // Protegidas
-  {
-    path: "/",
-    element: <ProtectedLayout />,
-    children: [
-      { index: true, element: <HomePage /> },
-      { path: "mapa", element: <MapPage /> },
-      { path: "categorias", element: <CategoriesPage /> },
-      { path: "categoria/:categoryId", element: <CategoryProductsPage /> },
-      { path: "punto/:id", element: <PuntoDetalle /> },
-      {path: "recientes", element: <RecentProductsPage />},
-      { path: "perfil", element: <ProfilePage /> },
-      { path: "configuracion", element: <SettingsPage /> },
-      { path: "producto/:id", element: <ProductDetail /> },
-      { path: "notificaciones", element: <NotificationsPage /> },
-      { path: "*", element: <Navigate to="/" replace /> },
-    ],
-  },
+{
+  path: "/",
+  element: <ProtectedLayout />,
+  children: [
+    { index: true, element: <HomePage /> },
+    { path: "mapa", element: <MapPage /> },
+    { path: "categorias", element: <CategoriesPage /> },
+    { path: "categoria/:categoryId", element: <CategoryProductsPage /> },
+    { path: "punto/:id", element: <PuntoDetalle /> },
+    { path: "recientes", element: <RecentProductsPage /> },
+    { path: "perfil", element: <ProfilePage /> },
+    { path: "configuracion", element: <SettingsPage /> },
+    { path: "producto/:id", element: <ProductDetail /> },
+    { path: "notificaciones", element: <NotificationsPage /> },
+    { path: "trade/:id", element: <TradeDetails /> },
+    { path: "trade/confirm", element: <TradeConfirm /> },
+    { path: "admin", element: <AdminDashboard /> },
+
+
+    { path: "*", element: <Navigate to="/" replace /> },
+  ],
+}
 ]);
 
 /* ---------- Render principal ---------- */

@@ -21,7 +21,7 @@ const AdminDashboard: React.FC = () => {
       const data = await getAllProducts();
       setProducts(data);
 
-      // Simulación de reportes (puedes luego conectarlo a Supabase)
+  
       setReports([
         {
           id: "r1",
