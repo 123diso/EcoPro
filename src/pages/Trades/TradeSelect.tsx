@@ -1,4 +1,4 @@
-import React from "react";
+
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useUserProducts } from "../../context/UserProductsContext";
 
