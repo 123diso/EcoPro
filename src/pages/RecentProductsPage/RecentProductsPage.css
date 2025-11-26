@@ -1,0 +1,40 @@
+.recent-products-page {
+  min-height: 100vh;
+  background-color: #FFF6DC;
+}
+
+.back-to-home {
+  background: none;
+  border: none;
+  color: #2E3F21;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: color 0.2s;
+}
+
+.back-to-home:hover {
+  color: #C78E4E;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+/* Modo oscuro */
+[data-theme="dark"] .recent-products-page {
+  background-color: var(--bg-color);
+}
+
+[data-theme="dark"] .back-to-home {
+  color: var(--text-color);
+}

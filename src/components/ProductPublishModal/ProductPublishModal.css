@@ -1,0 +1,343 @@
+/* ProductPublishModal.css */
+
+/* Overlay del modal */
+.publish-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+/* Contenedor principal del modal */
+.publish-modal-container {
+  background-color: #FFF6DC;
+  border-radius: 16px;
+  border: 2px solid #C78E4E;
+  width: 100%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Encabezado del modal */
+.publish-modal-header {
+  background-color: #2E3F21;
+  padding: 1.5rem 2rem;
+  border-radius: 14px 14px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.publish-back-button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.publish-back-button:hover:not(:disabled) {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.publish-back-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.publish-modal-title {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Formulario */
+.publish-product-form {
+  padding: 2rem;
+}
+
+.publish-form-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.publish-form-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.publish-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.publish-form-label {
+  color: #2E3F21;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.publish-form-input,
+.publish-form-select,
+.publish-form-textarea {
+  padding: 0.75rem 1rem;
+  border: 2px solid #C78E4E;
+  border-radius: 8px;
+  background-color: #FFE3B3;
+  color: #2E3F21;
+  font-size: 1rem;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.publish-form-input:focus,
+.publish-form-select:focus,
+.publish-form-textarea:focus {
+  outline: none;
+  border-color: #2E3F21;
+  background-color: #FFF6DC;
+}
+
+.publish-form-input::placeholder,
+.publish-form-select::placeholder,
+.publish-form-textarea::placeholder {
+  color: #8B7355;
+  opacity: 0.7;
+}
+
+.publish-form-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.publish-form-input:disabled,
+.publish-form-select:disabled,
+.publish-form-textarea:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.publish-form-help {
+  color: #666;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
+
+/* Vista previa de imagen */
+.publish-image-preview {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.publish-preview-title {
+  color: #2E3F21;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.publish-preview-image {
+  display: flex;
+  justify-content: center;
+}
+
+.publish-preview-image img {
+  max-width: 200px;
+  max-height: 150px;
+  border-radius: 8px;
+  border: 2px solid #C78E4E;
+}
+
+/* Sección de información */
+.publish-info-section {
+  background: linear-gradient(135deg, #FFE3B3, #FFF6DC);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  border: 1px solid #E4A868;
+}
+
+.publish-info-title {
+  color: #2E3F21;
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 0.75rem 0;
+}
+
+.publish-info-list {
+  margin: 0;
+  padding-left: 1.5rem;
+  color: #666;
+  line-height: 1.5;
+}
+
+.publish-info-list li {
+  margin-bottom: 0.25rem;
+}
+
+/* Botones de acción */
+.publish-form-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.publish-action-button {
+  padding: 0.875rem 2rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 160px;
+}
+
+.publish-button {
+  background: linear-gradient(135deg, #E4A868, #C78E4E);
+  color: white;
+  box-shadow: 0 4px 15px rgba(228, 168, 104, 0.3);
+}
+
+.publish-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(228, 168, 104, 0.4);
+}
+
+.cancel-button {
+  background-color: #2E3F21;
+  color: #FFF6DC;
+}
+
+.cancel-button:hover:not(:disabled) {
+  background-color: #3A4D2B;
+  transform: translateY(-1px);
+}
+
+.publish-action-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .publish-modal-container {
+    margin: 1rem;
+    max-height: 95vh;
+  }
+
+  .publish-form-container {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .publish-form-actions {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .publish-action-button {
+    width: 100%;
+  }
+
+  .publish-modal-header {
+    padding: 1rem 1.5rem;
+  }
+
+  .publish-product-form {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .publish-modal-overlay {
+    padding: 10px;
+  }
+
+  .publish-modal-header {
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+  }
+
+  .publish-back-button {
+    align-self: flex-start;
+  }
+}
+
+.publish-qr-section {
+  display: flex;
+  justify-content: center;
+  margin: 1.5rem 0;
+}
+
+.publish-qr-button {
+  background: linear-gradient(135deg, #2E3F21, #4A5C3B);
+  color: white;
+  border: none;
+  padding: 0.875rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 15px rgba(46, 63, 33, 0.3);
+}
+
+.publish-qr-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(46, 63, 33, 0.4);
+  background: linear-gradient(135deg, #3A4D2B, #556945);
+}
+
+.publish-qr-button:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Ajustes para la vista previa del QR */
+.publish-preview-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #C78E4E;
+}
+
+/* Responsive para sección QR */
+@media (max-width: 768px) {
+  .publish-qr-section {
+    margin: 1rem 0;
+  }
+  
+  .publish-qr-button {
+    width: 100%;
+    max-width: 300px;
+  }
+}

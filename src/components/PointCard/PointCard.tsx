@@ -6,11 +6,28 @@ import type { DandiPoint } from "../../types";
 
 type Props = {
   point: DandiPoint;
-  onFly?: () => void; // para que el lado derecho haga flyTo
+  onFly?: () => void;
+  /**
+   * variant:
+   * - "nearby"  → fuerza verde oscuro
+   * - "regular" → fuerza naranja
+   * - "auto" o undefined → usa point.type como antes
+   */
+  variant?: "nearby" | "regular" | "auto";
 };
 
-const PointCard: React.FC<Props> = ({ point, onFly }) => {
-  const isNearby = point.type === "nearby";
+const PointCard: React.FC<Props> = ({ point, onFly, variant = "auto" }) => {
+  // Decidimos si esta card se ve como cercana o regular
+  const finalVariant =
+    variant === "nearby"
+      ? "nearby"
+      : variant === "regular"
+      ? "regular"
+      : point.type === "nearby"
+      ? "nearby"
+      : "regular";
+
+  const isNearby = finalVariant === "nearby";
 
   return (
     <article

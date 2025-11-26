@@ -2,17 +2,7 @@ import React, { useMemo, useState } from "react";
 import ProductCard from "../ProductCard/ProductCard";
 import SearchBar from "../SearchBar/SearchBar";
 import "./ProductsGrid.css";
-
-export interface Product {
-  id: number;
-  title: string;
-  category: string;
-  condition: string;
-  location: string;
-  image?: string;
-  price?: string;
-  user?: string;
-}
+import type { Product } from "../../types/types";
 
 interface ProductsGridProps {
   products: Product[];
@@ -29,7 +19,6 @@ const ProductsGrid: React.FC<ProductsGridProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Filtrar productos basado en la búsqueda
   const filteredProducts = useMemo(() => {
     if (!searchQuery) return products;
     
@@ -42,7 +31,7 @@ const ProductsGrid: React.FC<ProductsGridProps> = ({
 
   return (
     <div className="products-grid-page">
-      {/* Header con título de categoría */}
+      {/* Header con título */}
       {categoryName && (
         <div className="products-grid-header">
           <h1 className="products-grid-title">{categoryName}</h1>
@@ -67,7 +56,7 @@ const ProductsGrid: React.FC<ProductsGridProps> = ({
       <div className="products-grid-container">
         {filteredProducts.length === 0 ? (
           <div className="products-grid-empty">
-            <div className="empty-icon">🔍</div>
+            <div className="empty-icon">📦</div>
             <h3>{emptyMessage}</h3>
             <p>Intenta con otros términos de búsqueda</p>
           </div>
@@ -90,5 +79,4 @@ const ProductsGrid: React.FC<ProductsGridProps> = ({
     </div>
   );
 };
-
 export default ProductsGrid;

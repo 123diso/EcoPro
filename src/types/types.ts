@@ -32,10 +32,9 @@ export interface SuggestedCardProps {
   showName?: boolean;
 }
 
-
 // Tipos para datos de la aplicación
 export interface Product {
-  id: number | string;
+  id: number | string;  // Acepta ambos tipos
   title: string;
   category: string;
   condition: string;
@@ -105,6 +104,7 @@ export interface ProductFormData {
   description: string;
   condition: string;
   image: string;
+  location: string;
 }
 
 export interface AuthFormData {
@@ -147,14 +147,12 @@ export interface SavedProduct {
   location?: string;
 }
 
-// Trades
-
-export interface Trade {
-  id: string;
-  product_offer_id: string;
-  product_receive_id: string;
-  status: "pending" | "accepted" | "rejected" | "completed";
-  created_at?: string;
-  updated_at?: string;
+// Tipos para SaveButton
+export interface SaveButtonProps {
+  id: number | string;
+  title: string;
+  category: string;
+  condition: string;
+  location: string;
+  image?: string;
 }
-

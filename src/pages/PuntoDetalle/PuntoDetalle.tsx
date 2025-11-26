@@ -1,24 +1,24 @@
 // src/pages/PuntoDetalle/PuntoDetalle.tsx
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import type { DandiPoint, SuggestedItem, TradeItem } from "../../types";
+import type { DandiPoint, SuggestedItem } from "../../types";
 import pointsData from "../../assets/dandiPoints.json";
 import suggestedRaw from "../../assets/suggestedItems.json";
-import tradesRaw from "../../assets/tradesItems.json";
 import LeafletMap from "../../components/Map/LeafletMap";
 import { useMap } from "react-leaflet";
 import L from "leaflet";
 import "./PuntoDetalle.css";
+import { useAllProducts } from "../../context/AllProductsContext";
 
+// Datos estáticos
 const allPoints: DandiPoint[] = pointsData as DandiPoint[];
 const suggested: SuggestedItem[] = suggestedRaw as SuggestedItem[];
-const trades: TradeItem[] = tradesRaw as TradeItem[];
 
 // ---------- Popup estilizado sobre Leaflet ----------
 function SelectedPopup({ point }: { point: DandiPoint }) {
   const map = useMap();
 
-  useMemo(() => {
+  useEffect(() => {
     const popup = L.popup({
       className: "dandi-popup",
       closeButton: false,
@@ -29,13 +29,18 @@ function SelectedPopup({ point }: { point: DandiPoint }) {
       .setContent(
         `<div class="dandi-pop">
            <div class="dandi-pop__title">${point.name}</div>
-           <div class="dandi-pop__meta">+${point.newPosts} Publicaciones nuevas<br/>+${point.activeUsers} Usuarios activos</div>
+           <div class="dandi-pop__meta">
+             +${point.newPosts} Publicaciones nuevas<br/>
+             +${point.activeUsers} Usuarios activos
+           </div>
            <div class="dandi-pop__badge">${point.distance}</div>
          </div>`
       );
 
     popup.openOn(map);
-    return () => map.closePopup(popup);
+    return () => {
+      map.closePopup(popup);
+    };
   }, [map, point]);
 
   return null;
@@ -45,9 +50,33 @@ export default function PuntoDetalle() {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const point = allPoints.find((p) => String(p.id) === id);
-  const nearby = allPoints.filter((p) => String(p.id) !== id);
+  // Productos reales desde el contexto
+  const { allProducts } = useAllProducts();
 
+  // Punto Dandi actual
+  const point = allPoints.find((p) => String(p.id) === id);
+
+  // Trueques reales asociados a este punto
+  const tradesForPoint = useMemo(() => {
+    if (!point) return [];
+
+    const norm = (s: string) =>
+      s
+        .normalize("NFD")
+        .replace(/\p{Diacritic}/gu, "")
+        .toLowerCase();
+
+    const pointName = norm(point.name);
+
+    return allProducts.filter((p) => {
+      if (!p.location) return false;
+      const loc = norm(p.location);
+      // Coincidencia flexible entre nombre del punto y location del producto
+      return loc.includes(pointName) || pointName.includes(loc);
+    });
+  }, [allProducts, point]);
+
+  // Si el punto no existe, salimos
   if (!point) {
     return (
       <main className="punto-layout">
@@ -85,25 +114,30 @@ export default function PuntoDetalle() {
 
         <h3 className="block-title">Todos los trueques</h3>
         <div className="grid-trueques">
-          {trades.slice(0, 9).map((t: TradeItem, i: number) => (
-            <div className="trade-card" key={t.id ?? i}>
-              <img src={t.image} alt={t.title ?? "Trueque"} />
-              <div className="trade-title">{t.title ?? "Item"}</div>
-              {t.available !== undefined && (
-                <div className="trade-meta">
-                  <span>Disponible: {t.available}</span>
-                </div>
-              )}
+          {tradesForPoint.length === 0 && (
+            <p>No hay trueques registrados en este punto todavía.</p>
+          )}
+
+          {tradesForPoint.map((t) => (
+            <div className="trade-card" key={t.id}>
+              <img src={t.image} alt={t.title} />
+              <div className="trade-title">{t.title}</div>
+              <div className="trade-meta">Estado: {t.condition}</div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Columna derecha: mapa con el punto seleccionado y cercanos */}
+      {/* Columna derecha: mapa solo con este punto */}
       <section className="punto-right">
-        <LeafletMap points={[point, ...nearby]} selectedPoint={point}>
-          <SelectedPopup point={point} />
-        </LeafletMap>
+        <div className="punto-map-wrapper">
+          <LeafletMap points={[point]} selectedPoint={point}>
+            <SelectedPopup point={point} />
+          </LeafletMap>
+
+          {/* Mensaje "tienda cerca" sobre el mapa */}
+          <div className="store-near-popup">Esta tienda queda cerca de ti</div>
+        </div>
       </section>
     </main>
   );

@@ -13,8 +13,20 @@
 
 .punto-right {
   height: 100%;
+  position: relative;
 }
 
+.punto-map-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Leaflet llenando el wrapper */
+.punto-map-wrapper .leaflet-container {
+  width: 100%;
+  height: 100%;
+}
 /* Flecha regresar */
 .back-btn {
   appearance: none;

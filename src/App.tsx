@@ -10,6 +10,7 @@ import Navbar from "./components/Navbar/Navbar";
 import HomePage from "./pages/HomePage/HomePage";
 import MapPage from "./pages/MapPage/MapPage";
 import PuntoDetalle from "./pages/PuntoDetalle/PuntoDetalle";
+import RecentProductsPage from "./pages/RecentProductsPage/RecentProductsPage";
 import { LoginPage } from "./pages/LoginPage/LoginPage";
 import { RegisterPage } from "./pages/RegisterPage/RegisterPage";
 import { ProfilePage } from "./pages/ProfilePage/ProfilePage";
@@ -17,28 +18,25 @@ import SettingsPage from "./pages/SettingsPage/SettingsPage";
 import NotificationsPage from "./pages/NotificationsPage/NotificationsPage";
 import CategoriesPage from "./pages/CategoriesPage/CategoriesPage";
 import CategoryProductsPage from "./pages/CategoryProductsPage/CategoryProductsPage";
-import ProductDetail from "./pages/ProductDetail/ProductDetail";
-
 import { AuthProvider } from "./context/AuthContextProvider";
 import { useAuth } from "./context/useAuthContext";
 import { SavedProvider } from "./context/SavedContext";
 import { UserProductsProvider } from "./context/UserProductsContext";
 import { SettingsProvider } from "./context/SettingsContext";
-
-import AdminDashboard from "./pages/AdminDashboard/AdminDashboard";
-
+import { AllProductsProvider } from "./context/AllProductsContext";
+import ProductDetail from "./pages/ProductDetail/ProductDetail";
 import "./App.css";
 
 /* ---------- Layout autenticado ---------- */
 const Layout: React.FC = () => (
   <SavedProvider>
     <UserProductsProvider>
-      <AuthProvider>
-        <SettingsProvider>
+      <SettingsProvider>
+        <AllProductsProvider>
           <Navbar />
           <Outlet />
-        </SettingsProvider>
-      </AuthProvider>
+        </AllProductsProvider>
+      </SettingsProvider>
     </UserProductsProvider>
   </SavedProvider>
 );
@@ -88,11 +86,11 @@ const router = createBrowserRouter([
       { path: "categorias", element: <CategoriesPage /> },
       { path: "categoria/:categoryId", element: <CategoryProductsPage /> },
       { path: "punto/:id", element: <PuntoDetalle /> },
+      {path: "recientes", element: <RecentProductsPage />},
       { path: "perfil", element: <ProfilePage /> },
       { path: "configuracion", element: <SettingsPage /> },
       { path: "producto/:id", element: <ProductDetail /> },
       { path: "notificaciones", element: <NotificationsPage /> },
-      { path: "admin", element: <AdminDashboard /> },
       { path: "*", element: <Navigate to="/" replace /> },
     ],
   },
