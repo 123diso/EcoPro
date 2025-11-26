@@ -156,3 +156,14 @@ export interface SaveButtonProps {
   location: string;
   image?: string;
 }
+
+interface Trade {
+  id: string;
+  product_offer_id: string;
+  product_receive_id: string;
+  offering_user_id: string;
+  receiving_user_id: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+}
