@@ -28,46 +28,51 @@ export const ProfilePage: React.FC = () => {
     navigate("/login");
   };
 
-  const handleEdit = () => {};
+  const handleEdit = () => {
+    // Función para editar perfil (puedes implementarla después)
+    console.log("Editar perfil");
+  };
 
   const handleCreatePost = () => {
     setShowPublishModal(true);
   };
 
   const handlePublishProduct = async (productData: ProductFormData) => {
-  setPublishStatus("loading");
-  try {
-    const newProduct = await addProduct({
-      title: productData.name,
-      category: productData.category,
-      description: productData.description,
-      condition: productData.condition,
-      image: productData.image,
-      location: productData.location
-    });
-    
-    console.log("Producto creado:", newProduct);
-    
-    // Forzar refresh inmediato
-    await refreshProducts();
-    
-    setPublishStatus("success");
-    setShowPublishModal(false);
-    
-    // Mostrar mensaje de éxito
-    setTimeout(() => {
-      setPublishStatus("idle");
-    }, 3000);
-    
-  } catch (error) {
-    console.error("Error al publicar producto:", error);
-    setPublishStatus("error");
-    
-    setTimeout(() => {
-      setPublishStatus("idle");
-    }, 3000);
-  }
-};
+    setPublishStatus("loading");
+    try {
+      const newProduct = await addProduct({
+        title: productData.name,
+        category: productData.category,
+        description: productData.description,
+        condition: productData.condition,
+        image: productData.image,
+        location: productData.location
+      });
+      
+      console.log("Producto creado:", newProduct);
+      
+      // Forzar refresh inmediato de todos los productos
+      await refreshProducts();
+      
+      // Recargar los productos del usuario
+      await fetchUserProducts();
+      
+      setPublishStatus("success");
+      setShowPublishModal(false);
+      
+      setTimeout(() => {
+        setPublishStatus("idle");
+      }, 3000);
+      
+    } catch (error) {
+      console.error("Error al publicar producto:", error);
+      setPublishStatus("error");
+      
+      setTimeout(() => {
+        setPublishStatus("idle");
+      }, 3000);
+    }
+  };
 
   const savedList = Object.values(saved.products);
 
@@ -99,9 +104,10 @@ export const ProfilePage: React.FC = () => {
               <h1 className="profile-name">
                 {user?.user_metadata?.username ||
                   user?.user_metadata?.full_name ||
-                  "Usuario"}
+                  "Usuario Dandi"}
               </h1>
               <p className="profile-posts">{userProducts.length} Publicaciones</p>
+              <p className="profile-saved">{savedList.length} Guardados</p>
               <div className="profile-rating">
                 <span>⭐ 4.5/5</span>
               </div>
@@ -112,7 +118,7 @@ export const ProfilePage: React.FC = () => {
                 Cerrar sesión
               </button>
               <button onClick={handleEdit} className="action-button edit">
-                Editar
+                Editar perfil
               </button>
             </div>
           </div>
@@ -141,7 +147,7 @@ export const ProfilePage: React.FC = () => {
                   className={`tab ${activeTab === "guardados" ? "active" : ""}`}
                   onClick={() => setActiveTab("guardados")}
                 >
-                  ❤️ Guardados
+                  📑 Guardados ({savedList.length})
                 </button>
                 <button
                   className={`tab ${activeTab === "posts" ? "active" : ""}`}
@@ -155,17 +161,22 @@ export const ProfilePage: React.FC = () => {
             {activeTab === "guardados" && (
               <div className="items-grid">
                 {savedList.length === 0 ? (
-                  <p className="saved-empty">No has guardado ninguna publicación.</p>
+                  <div className="saved-empty">
+                    <div className="empty-icon">📑</div>
+                    <h3>No tienes productos guardados</h3>
+                    <p>Los productos que guardes aparecerán aquí</p>
+                    <p>Haz clic en el icono ✅ de cualquier producto para guardarlo</p>
+                  </div>
                 ) : (
-                  savedList.map((p) => (
+                  savedList.map((product) => (
                     <ProductCard
-                      key={String(p.id)}
-                      id={Number(p.id)}
-                      title={p.title}
-                      image={p.image}
-                      category={p.category ?? ""}
-                      condition={p.condition ?? ""}
-                      location={p.location ?? ""}
+                      key={String(product.id)}
+                      id={product.id}
+                      title={product.title}
+                      image={product.image}
+                      category={product.category ?? ""}
+                      condition={product.condition ?? ""}
+                      location={product.location ?? ""}
                     />
                   ))
                 )}
@@ -175,9 +186,17 @@ export const ProfilePage: React.FC = () => {
             {activeTab === "posts" && (
               <div className="items-grid">
                 {userProducts.length === 0 ? (
-                  <p className="saved-empty">
-                    Aún no tienes publicaciones. ¡Crea tu primera publicación!
-                  </p>
+                  <div className="saved-empty">
+                    <div className="empty-icon">📦</div>
+                    <h3>Aún no tienes publicaciones</h3>
+                    <p>¡Crea tu primera publicación para empezar a hacer trueques!</p>
+                    <button 
+                      className="create-first-btn"
+                      onClick={handleCreatePost}
+                    >
+                      Crear mi primera publicación
+                    </button>
+                  </div>
                 ) : (
                   userProducts.map((product) => (
                     <ProductCard

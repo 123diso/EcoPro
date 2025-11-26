@@ -1,4 +1,5 @@
 import React from "react";
+import { useSaved } from "../../context/SavedContext";
 import "./SaveButton.css";
 import type { SaveButtonProps } from "../../types/types";
 
@@ -10,8 +11,17 @@ const SaveButton: React.FC<SaveButtonProps> = ({
   condition, 
   location 
 }) => {
-  const handleSave = () => {
-    console.log("Guardando producto:", {
+  const { isProductSaved, toggleProduct, loading } = useSaved();
+
+  const isSaved = isProductSaved(id);
+
+  const handleSaveClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    
+    if (loading) return; // Evitar múltiples clicks
+    
+    toggleProduct({
       id,
       title,
       image,
@@ -19,14 +29,24 @@ const SaveButton: React.FC<SaveButtonProps> = ({
       condition,
       location
     });
-    // Aquí irá la lógica para guardar el producto
   };
 
   return (
-    <button className="save-btn" onClick={handleSave}>
-      <svg width="24" height="24" viewBox="0 0 24 24">
-        <path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2z"/>
-      </svg>
+    <button 
+      className={`save-btn ${isSaved ? 'is-saved' : ''} ${loading ? 'is-loading' : ''}`} 
+      onClick={handleSaveClick}
+      disabled={loading}
+      aria-label={isSaved ? "Quitar de guardados" : "Guardar producto"}
+    >
+      {loading ? (
+        <div className="save-btn__loading">⏳</div>
+      ) : (
+        <img 
+          src={isSaved ? "/bookmark 2.png" : "/bookmark.png"} 
+          alt={isSaved ? "Producto guardado" : "Guardar producto"}
+          className="save-btn__icon"
+        />
+      )}
     </button>
   );
 };

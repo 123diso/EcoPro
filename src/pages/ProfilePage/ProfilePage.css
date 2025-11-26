@@ -74,6 +74,12 @@
   margin: 0 0 0.5rem 0;
 }
 
+.profile-saved {
+  color: #666;
+  font-size: 1rem;
+  margin: 0 0 0.5rem 0;
+}
+
 .profile-rating {
   color: #007bff;
   font-weight: 500;
@@ -153,32 +159,6 @@
   transform: translateY(0);
 }
 
-.register-status {
-  margin-top: 1rem;
-  padding: 0.75rem;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 0.95rem;
-}
-
-.register-status.loading {
-  background-color: #FFE3B3;
-  color: #8B7355;
-  border: 1px solid #E4A868;
-}
-
-.register-status.success {
-  background-color: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
-}
-
-.register-status.error {
-  background-color: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
-}
-
 .posts-section {
   background: white;
   border-radius: 16px;
@@ -200,34 +180,39 @@
 .posts-title {
   color: #333;
   font-size: 2rem;
-  margin: 0;
   font-weight: 600;
+  margin: 0;
 }
 
 .posts-tabs {
   display: flex;
   gap: 0.5rem;
+  background: #f8f9fa;
+  padding: 0.5rem;
+  border-radius: 12px;
 }
 
 .tab {
-  padding: 0.5rem 1rem;
-  border: 1px solid #ddd;
-  background: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  background: transparent;
   color: #666;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s;
-  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
 }
 
 .tab.active {
-  border-bottom-color: white;
-  color: white;
   background: #E4A868;
+  color: white;
+  box-shadow: 0 2px 8px rgba(228, 168, 104, 0.3);
 }
 
 .tab:hover:not(.active) {
-  background-color: #f8f9fa;
+  background: rgba(228, 168, 104, 0.1);
+  color: #E4A868;
 }
 
 .items-grid {
@@ -236,12 +221,78 @@
   gap: 1.5rem;
 }
 
+/* Estados vacíos */
 .saved-empty {
   text-align: center;
+  padding: 4rem 2rem;
   color: #666;
-  font-size: 1.1rem;
-  padding: 2rem;
   grid-column: 1 / -1;
+  background: #f8f9fa;
+  border-radius: 16px;
+  border: 2px dashed #E4A868;
+}
+
+.saved-empty .empty-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.saved-empty h3 {
+  color: #2E3F21;
+  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+}
+
+.saved-empty p {
+  margin: 0.5rem 0;
+  opacity: 0.7;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.create-first-btn {
+  margin-top: 1rem;
+  background: linear-gradient(135deg, #E4A868, #C78E4E);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.create-first-btn:hover {
+  transform: translateY(-2px);
+}
+
+/* Estados de publicación */
+.publish-status {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.publish-status.loading {
+  background-color: #FFE3B3;
+  color: #8B7355;
+  border: 1px solid #E4A868;
+}
+
+.publish-status.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.publish-status.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
 }
 
 /* Mobile Styles */
@@ -273,31 +324,71 @@
     width: 100%;
     padding: 0.875rem 1.5rem;
   }
+
+  .posts-tabs {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .tab {
+    text-align: center;
+    width: 100%;
+  }
+  
+  .saved-empty {
+    padding: 2rem 1rem;
+  }
+  
+  .saved-empty .empty-icon {
+    font-size: 3rem;
+  }
+
+  .profile-name {
+    font-size: 1.5rem;
+  }
+
+  .posts-title {
+    font-size: 1.5rem;
+  }
+
+  .avatar-large {
+    width: 100px;
+    height: 100px;
+    font-size: 2.5rem;
+  }
 }
 
-.publish-status {
-  margin-top: 1rem;
-  padding: 0.75rem;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  text-align: center;
-}
+@media (max-width: 480px) {
+  .profile-content {
+    padding: 0 0.5rem;
+  }
 
-.publish-status.loading {
-  background-color: #FFE3B3;
-  color: #8B7355;
-  border: 1px solid #E4A868;
-}
+  .profile-info {
+    padding: 1.5rem;
+  }
 
-.publish-status.success {
-  background-color: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
-}
+  .posts-section {
+    padding: 1.5rem;
+  }
 
-.publish-status.error {
-  background-color: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
+  .profile-banner {
+    height: 150px;
+    margin-bottom: -40px;
+  }
+
+  .avatar-large {
+    width: 80px;
+    height: 80px;
+    font-size: 2rem;
+  }
+
+  .action-button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
+
+  .create-post-button {
+    font-size: 1rem;
+    padding: 0.875rem 1rem;
+  }
 }

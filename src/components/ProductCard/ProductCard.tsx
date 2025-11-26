@@ -41,6 +41,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         </div>
       </div>
 
+      {/* SaveButton posicionado absolutamente */}
       <SaveButton
         id={id}
         title={title}

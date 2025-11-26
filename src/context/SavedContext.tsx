@@ -24,6 +24,7 @@ type SavedContextType = {
   saved: SavedState;
   isProductSaved: (id: number | string) => boolean;
   toggleProduct: (item: SavedProduct) => Promise<void>;
+  loading: boolean;
 };
 
 const SavedContext = createContext<SavedContextType | undefined>(undefined);
@@ -33,79 +34,85 @@ export const SavedProvider: React.FC<React.PropsWithChildren> = ({
   children,
 }) => {
   const { user } = useAuth();
-
-  const [saved, setSaved] = useState<SavedState>(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? (JSON.parse(raw) as SavedState) : { products: {} };
-    } catch {
-      return { products: {} };
-    }
-  });
+  const [saved, setSaved] = useState<SavedState>({ products: {} });
+  const [loading, setLoading] = useState(false);
 
   // Cargar guardados desde Supabase cuando hay usuario
-  useEffect(() => {
-    const loadSaved = async () => {
-  if (!user) {
-    setSaved({ products: {} });
-    return;
-  }
-  
-  const { data: savedRows, error: savedErr } = await supabase
-    .from("saved_posts")  // CAMBIADO
-    .select("post_id")
-    .eq("user_id", user.id);
+  const loadSaved = useCallback(async () => {
+    if (!user) {
+      setSaved({ products: {} });
+      return;
+    }
 
-  if (savedErr) {
-    console.error("[saved_posts select error]:", savedErr);
-    return;
-  }
+    setLoading(true);
+    try {
+      console.log("Cargando saved_posts para usuario:", user.id);
+      
+      const { data: savedRows, error: savedErr } = await supabase
+        .from("saved_posts")
+        .select("post_id")
+        .eq("user_id", user.id);
 
-  const postIds = (savedRows ?? []).map((r) => r.post_id);
-  if (postIds.length === 0) {
-    setSaved({ products: {} });
-    return;
-  }
+      if (savedErr) {
+        console.error("[saved_posts select error]:", savedErr);
+        // Si la tabla no existe, retornar vacío
+        if (savedErr.code === '42P01') { // tabla no existe
+          console.warn("La tabla saved_posts no existe aún");
+          setSaved({ products: {} });
+          return;
+        }
+        throw savedErr;
+      }
 
-  const { data: posts, error: postsErr } = await supabase
-    .from("user_posts")
-    .select("id,title,category,condition,location,image")
-    .in("id", postIds);
+      console.log("Saved rows encontrados:", savedRows);
 
-  if (postsErr) {
-    console.error("[user_posts select error]:", postsErr);
-    return;
-  }
+      const postIds = (savedRows ?? []).map((r) => r.post_id);
+      if (postIds.length === 0) {
+        setSaved({ products: {} });
+        return;
+      }
 
-  type DbPost = {
-    id: number | string;
-    title: string;
-    category: string;
-    condition: string;
-    location: string;
-    image?: string | null;
-  };
-  
-  const products = Object.fromEntries(
-    (posts ?? []).map((row: DbPost) => [
-      String(row.id),
-      {
-        id: row.id,
-        title: row.title,
-        image: row.image ?? undefined,
-        category: row.category,
-        condition: row.condition,
-        location: row.location,
-      } as SavedProduct,
-    ])
-  );
-  setSaved({ products });
-};
+      // Obtener información de los posts guardados
+      const { data: posts, error: postsErr } = await supabase
+        .from("user_posts")
+        .select("id, title, category, condition, location, image")
+        .in("id", postIds);
 
-    void loadSaved();
+      if (postsErr) {
+        console.error("[user_posts select error]:", postsErr);
+        return;
+      }
+
+      const products = Object.fromEntries(
+        (posts ?? []).map((row) => [
+          String(row.id),
+          {
+            id: row.id,
+            title: row.title,
+            image: row.image ?? undefined,
+            category: row.category,
+            condition: row.condition,
+            location: row.location,
+          } as SavedProduct,
+        ])
+      );
+      
+      setSaved({ products });
+      console.log("Productos guardados cargados:", products);
+
+    } catch (error) {
+      console.error("Error en loadSaved:", error);
+      setSaved({ products: {} });
+    } finally {
+      setLoading(false);
+    }
   }, [user]);
 
-  // Persistencia local
+  useEffect(() => {
+    loadSaved();
+  }, [loadSaved]);
+
+  // Persistencia local como fallback
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
@@ -121,59 +128,90 @@ export const SavedProvider: React.FC<React.PropsWithChildren> = ({
 
   const toggleProduct = useCallback(
     async (item: SavedProduct) => {
-      if (!user) return;
+      if (!user) {
+        console.warn("Usuario no autenticado, no se puede guardar");
+        return;
+      }
+
       const key = String(item.id);
       const currentlySaved = Boolean(saved.products[key]);
 
-      if (currentlySaved) {
-        const postIdValue = Number.isNaN(Number(key)) ? key : Number(key);
-        const { error } = await supabase
-          .from("saved_posts")
-          .delete()
-          .eq("user_id", user.id)
-          .eq("post_id", postIdValue);
-        if (error) {
-          return;
+      setLoading(true);
+      try {
+        if (currentlySaved) {
+          // Eliminar de guardados
+          console.log("Eliminando de guardados:", key);
+          const { error } = await supabase
+            .from("saved_posts")
+            .delete()
+            .eq("user_id", user.id)
+            .eq("post_id", key);
+
+          if (error) {
+            console.error("Error al eliminar de guardados:", error);
+            return;
+          }
+
+          setSaved((prev) => {
+            const next: SavedState = { products: { ...prev.products } };
+            delete next.products[key];
+            return next;
+          });
+          console.log("Producto eliminado de guardados");
+
+        } else {
+          // Agregar a guardados
+          console.log("Agregando a guardados:", key);
+          const insertPayload = {
+            user_id: user.id,
+            post_id: key,
+            saved_at: new Date().toISOString(),
+          };
+
+          const { error } = await supabase
+            .from("saved_posts")
+            .insert([insertPayload]);
+
+          if (error) {
+            console.error("Error al guardar producto:", error);
+            // Si hay error de constraint único, puede que ya exista
+            if (error.code === '23505') {
+              console.log("El producto ya estaba guardado");
+            }
+            return;
+          }
+
+          setSaved((prev) => {
+            const next: SavedState = { products: { ...prev.products } };
+            next.products[key] = item;
+            return next;
+          });
+          console.log("Producto guardado exitosamente");
         }
-        setSaved((prev) => {
-          const next: SavedState = { products: { ...prev.products } };
-          delete next.products[key];
-          return next;
-        });
-      } else {
-        const postIdValue = Number.isNaN(Number(key)) ? key : Number(key);
-        const insertPayload: Record<string, string | number> = {
-          user_id: user.id,
-          post_id: postIdValue,
-          // Si la columna existe y no tiene default, esto la llena
-          saved_at: new Date().toISOString(),
-        };
-        const { error } = await supabase
-          .from("saved_posts")
-          .insert({ ...insertPayload });
-        if (error) {
-          return;
-        }
-        setSaved((prev) => {
-          const next: SavedState = { products: { ...prev.products } };
-          next.products[key] = item;
-          return next;
-        });
+      } catch (error) {
+        console.error("Error en toggleProduct:", error);
+      } finally {
+        setLoading(false);
       }
     },
     [saved, user]
   );
 
   const value = useMemo(
-    () => ({ saved, isProductSaved, toggleProduct }),
-    [saved, isProductSaved, toggleProduct]
+    () => ({ 
+      saved, 
+      isProductSaved, 
+      toggleProduct,
+      loading 
+    }),
+    [saved, isProductSaved, toggleProduct, loading]
   );
+  
   return (
     <SavedContext.Provider value={value}>{children}</SavedContext.Provider>
   );
 };
 
-// eslint-disable-next-line react-refresh/only-export-components
 export const useSaved = (): SavedContextType => {
   const ctx = useContext(SavedContext);
   if (!ctx) throw new Error("useSaved must be used within <SavedProvider>");
