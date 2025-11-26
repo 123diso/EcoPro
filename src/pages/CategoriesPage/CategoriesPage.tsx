@@ -33,6 +33,9 @@ const CategoriesPage: React.FC = () => {
       {/* Título principal */}
       <div className="categories-header">
         <h1 className="categories-title">Todas las categorías</h1>
+        <p className="categories-subtitle">
+          Explora productos por categoría
+        </p>
       </div>
 
       {/* Cuadrícula de categorías */}

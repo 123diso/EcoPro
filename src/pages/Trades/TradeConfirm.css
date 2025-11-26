@@ -1,0 +1,35 @@
+.trade-confirm-container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 24px;
+  text-align: center;
+}
+
+.trade-card {
+  background: #ffffff;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  margin: 20px 0;
+}
+
+.trade-card img {
+  width: 100%;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+
+.trade-info h2 {
+  margin: 8px 0;
+}
+
+.confirm-btn {
+  background: #4a7c59;
+  color: white;
+  padding: 14px;
+  border-radius: 8px;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  width: 100%;
+}

@@ -1,4 +1,4 @@
-/* ProfilePage Styles */
+/* ProfilePage.css */
 .profile-page {
   min-height: 100vh;
   background-color: #f8f9fa;
@@ -121,6 +121,64 @@
   background-color: #218838;
 }
 
+/* Sección de crear publicación */
+.create-post-section {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.create-post-button {
+  background: linear-gradient(135deg, #E4A868 0%, #C78E4E 100%);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(228, 168, 104, 0.3);
+}
+
+.create-post-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(228, 168, 104, 0.4);
+}
+
+.create-post-button:active {
+  transform: translateY(0);
+}
+
+.register-status {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.register-status.loading {
+  background-color: #FFE3B3;
+  color: #8B7355;
+  border: 1px solid #E4A868;
+}
+
+.register-status.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.register-status.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
 .posts-section {
   background: white;
   border-radius: 16px;
@@ -133,13 +191,15 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 1rem;
   flex-wrap: wrap;
   gap: 1rem;
 }
 
 .posts-title {
   color: #333;
-  font-size: 1.5rem;
+  font-size: 2rem;
   margin: 0;
   font-weight: 600;
 }
@@ -152,18 +212,18 @@
 .tab {
   padding: 0.5rem 1rem;
   border: 1px solid #ddd;
-  background: var(--white);
+  background: white;
   color: #666;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s;
-  text-decoration: white;
+  text-decoration: none;
 }
 
 .tab.active {
-  border-bottom-color: var(--white);
+  border-bottom-color: white;
   color: white;
-  background: var(--orange-accent);
+  background: #E4A868;
 }
 
 .tab:hover:not(.active) {
@@ -176,87 +236,12 @@
   gap: 1.5rem;
 }
 
-.item-card {
-  background: #f8f9fa;
-  border-radius: 12px;
-  overflow: hidden;
-  transition: transform 0.2s, box-shadow 0.2s;
-  position: relative;
-}
-
-.item-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-}
-
-.item-image {
-  width: 100%;
-  height: 200px;
-  background-color: #e9ecef;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #6c757d;
-  font-size: 3rem;
-}
-
-.item-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.item-content {
-  padding: 1rem;
-}
-
-.item-title {
-  color: #333;
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin: 0 0 0.5rem 0;
-}
-
-.item-category {
-  color: #007bff;
-  font-size: 0.9rem;
-  margin: 0 0 0.5rem 0;
-  font-weight: 500;
-}
-
-.item-status {
+.saved-empty {
+  text-align: center;
   color: #666;
-  font-size: 0.9rem;
-  margin: 0 0 0.5rem 0;
-}
-
-.item-time {
-  color: #999;
-  font-size: 0.8rem;
-  margin: 0;
-}
-
-.item-bookmark {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.item-bookmark:hover {
-  background: white;
-}
-
-.bookmark-icon {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
+  padding: 2rem;
+  grid-column: 1 / -1;
 }
 
 /* Mobile Styles */
@@ -279,25 +264,40 @@
   .items-grid {
     grid-template-columns: 1fr;
   }
+
+  .create-post-section {
+    padding: 1rem 1.5rem;
+  }
+
+  .create-post-button {
+    width: 100%;
+    padding: 0.875rem 1.5rem;
+  }
 }
 
-.admin-access {
-  margin-top: 40px;
+.publish-status {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
   text-align: center;
 }
 
-.admin-button {
-  background-color: #2f3e2f;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 22px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
+.publish-status.loading {
+  background-color: #FFE3B3;
+  color: #8B7355;
+  border: 1px solid #E4A868;
 }
 
-.admin-button:hover {
-  background-color: #1f2a1f;
+.publish-status.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.publish-status.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
 }

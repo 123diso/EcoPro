@@ -26,30 +26,16 @@
   padding: 6px 2px 4px;
 }
 
-@media (max-width: 480px) {
-  .suggested__title {
-    font-size: 1.5rem;
-  }
-}
 /* Contenedor del buscador */
 .searchbar-container {
   display: flex;
-  justify-content: flex-start; /* alineado a la izquierda */
-  margin-bottom: 20px; /* espacio con lo demás */
+  justify-content: flex-start;
+  margin-bottom: 20px;
 }
 
-/* Cards sugeridas */
-.suggested__row {
-  display: flex;
-  justify-content: center; /* las cards siguen centradas */
-  gap: 18px;
-  flex-wrap: wrap;
-  padding: 6px 2px 4px;
-}
-
-/* ====== Según tus intereses (layout de la sección) ====== */
+/* Products section general */
 .products-section {
-  margin: 0 8%; /* igual que tus "Sugeridos / Trueques" */
+  margin: 0 8%;
   padding: 18px 0 22px;
 }
 
@@ -60,7 +46,6 @@
   margin-bottom: 12px;
 }
 
-/* 4 columnas en desktop; responsivo con breakpoints */
 .products-section__list {
   display: grid;
   gap: 22px;
@@ -82,5 +67,36 @@
 @media (max-width: 580px) {
   .products-section__list {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Estados */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.no-products {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: #666;
+  background: #f8f9fa;
+  border-radius: 12px;
+  margin: 2rem 0;
+  border: 1px solid #e9ecef;
+}
+
+.no-products p {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+@media (max-width: 480px) {
+  .suggested__title {
+    font-size: 1.5rem;
   }
 }

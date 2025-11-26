@@ -1,0 +1,135 @@
+.trade-wrapper {
+  padding: 25px 40px;
+  max-width: 1400px;
+  margin: auto;
+}
+
+.back-btn {
+  font-size: 22px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.page-title {
+  font-size: 28px;
+  margin: 10px 0 25px;
+  font-weight: bold;
+}
+
+/* --- DISTRIBUCIÓN EN DOS COLUMNAS --- */
+.columns-wrapper {
+  display: flex;
+  gap: 40px;
+}
+
+.left-column {
+  width: 55%;
+}
+
+.right-column {
+  width: 45%;
+}
+
+/* --- TARJETA DE RESUMEN --- */
+.summary-card {
+  background: #f3ebd3;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 25px;
+}
+
+.summary-card h2 {
+  border-bottom: 1px solid #cba675;
+  padding-bottom: 8px;
+  margin-bottom: 15px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+}
+
+.status.approved {
+  color: #3b7b1b;
+}
+
+/* --- PRODUCTOS --- */
+.section-title {
+  font-size: 22px;
+  margin: 25px 0 10px;
+}
+
+.products-grid {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.product-card {
+  background: #2d3e22;
+  padding: 15px;
+  border-radius: 10px;
+  width: 250px;
+  color: white;
+  height: 220px;
+}
+
+.product-card img {
+  width: 100%;
+  height: 120px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+/* --- USUARIOS INVOLUCRADOS --- */
+.users-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.user-card {
+  display: flex;
+  align-items: center;
+  background: white;
+  border: 2px solid #243117;
+  border-radius: 10px;
+  padding: 10px;
+  gap: 10px;
+  width: 300px;
+}
+
+.avatar {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+}
+
+/* --- HISTORIAL --- */
+.timeline-card {
+  background: #eee7d5;
+  padding: 20px;
+  border-radius: 12px;
+}
+
+.timeline-card h2 {
+  border-bottom: 1px solid #cba675;
+  padding-bottom: 8px;
+}
+
+.timeline-item {
+  display: flex;
+  gap: 15px;
+  padding: 18px 0;
+}
+
+.dot {
+  width: 20px;
+  height: 20px;
+  background: #c08b39;
+  border-radius: 50%;
+  margin-top: 4px;
+}
