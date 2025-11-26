@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import QRCode from "react-qr-code";
 import "./ProductRegisterModal.css";
 import type { ProductFormData } from "../../types/types";
 import dandiPointsData from "../../assets/dandiPoints.json";
@@ -23,6 +24,9 @@ const ProductRegisterModal: React.FC<ProductRegisterModalProps> = ({
     location: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [qrValue, setQrValue] = useState<string | null>(null);
+  const [showQr, setShowQr] = useState(false);
 
   const categories = [
     "Electrónica",
@@ -78,6 +82,33 @@ const ProductRegisterModal: React.FC<ProductRegisterModalProps> = ({
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  // 👇 NUEVO: función para generar el QR
+  const handleGenerateQr = () => {
+    // Validamos que haya datos básicos del producto
+    if (
+      !formData.name ||
+      !formData.category ||
+      !formData.description ||
+      !formData.condition
+    ) {
+      alert("Completa los datos del producto antes de generar el QR.");
+      return;
+    }
+
+    // Aquí decides qué información quieres que lleve el QR.
+    // Incluimos el estado del producto (condition) como pediste.
+    const payload = JSON.stringify({
+      name: formData.name,
+      category: formData.category,
+      condition: formData.condition, // 👈 estado del producto
+      description: formData.description,
+      image: formData.image,
+    });
+
+    setQrValue(payload);
+    setShowQr(true);
   };
 
   const handleCancel = () => {
@@ -253,10 +284,29 @@ const ProductRegisterModal: React.FC<ProductRegisterModalProps> = ({
 
           {/* Botón Generar QR */}
           <div className="qr-section">
-            <button type="button" className="qr-button" disabled={isSubmitting}>
+            <button
+              type="button"
+              className="qr-button"
+              onClick={handleGenerateQr} // 👈 usamos la función nueva
+              disabled={
+                isSubmitting ||
+                !formData.name ||
+                !formData.category ||
+                !formData.description ||
+                !formData.condition
+              }
+            >
               {isSubmitting ? "Procesando..." : "Generar QR"}
             </button>
           </div>
+          {showQr && qrValue && (
+            <div className="image-preview">
+              <h4 className="preview-title">QR del producto:</h4>
+              <div className="preview-image">
+                <QRCode value={qrValue} size={160} />
+              </div>
+            </div>
+          )}
 
           {/* Botones de acción */}
           <div className="form-actions">
