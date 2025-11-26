@@ -84,7 +84,7 @@ const ProductRegisterModal: React.FC<ProductRegisterModalProps> = ({
     }
   };
 
-  // 👇 NUEVO: función para generar el QR
+  // Función para generar el QR
   const handleGenerateQr = () => {
     // Validamos que haya datos básicos del producto
     if (
@@ -97,14 +97,19 @@ const ProductRegisterModal: React.FC<ProductRegisterModalProps> = ({
       return;
     }
 
-    // Aquí decides qué información quieres que lleve el QR.
-    // Incluimos el estado del producto (condition) como pediste.
+    // Crear un ID único para el producto
+    const productId = `prod_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    // Información para el QR
     const payload = JSON.stringify({
+      productId: productId,
       name: formData.name,
       category: formData.category,
-      condition: formData.condition, // 👈 estado del producto
+      condition: formData.condition,
       description: formData.description,
       image: formData.image,
+      timestamp: new Date().toISOString(),
+      type: "registered_product"
     });
 
     setQrValue(payload);
@@ -120,6 +125,8 @@ const ProductRegisterModal: React.FC<ProductRegisterModalProps> = ({
       image: "",
       location: "",
     });
+    setQrValue(null);
+    setShowQr(false);
     onClose();
   };
 
@@ -287,7 +294,7 @@ const ProductRegisterModal: React.FC<ProductRegisterModalProps> = ({
             <button
               type="button"
               className="qr-button"
-              onClick={handleGenerateQr} // 👈 usamos la función nueva
+              onClick={handleGenerateQr}
               disabled={
                 isSubmitting ||
                 !formData.name ||
@@ -299,6 +306,8 @@ const ProductRegisterModal: React.FC<ProductRegisterModalProps> = ({
               {isSubmitting ? "Procesando..." : "Generar QR"}
             </button>
           </div>
+
+          {/* Mostrar QR generado */}
           {showQr && qrValue && (
             <div className="image-preview">
               <h4 className="preview-title">QR del producto:</h4>

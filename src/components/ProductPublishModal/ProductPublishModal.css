@@ -286,3 +286,58 @@
     align-self: flex-start;
   }
 }
+
+.publish-qr-section {
+  display: flex;
+  justify-content: center;
+  margin: 1.5rem 0;
+}
+
+.publish-qr-button {
+  background: linear-gradient(135deg, #2E3F21, #4A5C3B);
+  color: white;
+  border: none;
+  padding: 0.875rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 15px rgba(46, 63, 33, 0.3);
+}
+
+.publish-qr-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(46, 63, 33, 0.4);
+  background: linear-gradient(135deg, #3A4D2B, #556945);
+}
+
+.publish-qr-button:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Ajustes para la vista previa del QR */
+.publish-preview-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #C78E4E;
+}
+
+/* Responsive para sección QR */
+@media (max-width: 768px) {
+  .publish-qr-section {
+    margin: 1rem 0;
+  }
+  
+  .publish-qr-button {
+    width: 100%;
+    max-width: 300px;
+  }
+}

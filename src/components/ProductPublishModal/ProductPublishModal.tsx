@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import QRCode from "react-qr-code";
 import "./ProductPublishModal.css";
 import type { ProductFormData } from "../../types/types";
 import dandiPointsData from "../../assets/dandiPoints.json";
@@ -23,6 +24,9 @@ const ProductPublishModal: React.FC<ProductPublishModalProps> = ({
     location: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [qrValue, setQrValue] = useState<string | null>(null);
+  const [showQr, setShowQr] = useState(false);
 
   const categories = [
     "Electrónica",
@@ -81,11 +85,46 @@ const ProductPublishModal: React.FC<ProductPublishModalProps> = ({
         image: "",
         location: "",
       });
+      setQrValue(null);
+      setShowQr(false);
     } catch (error) {
       console.error("Error en el formulario:", error);
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  // Función para generar el QR
+  const handleGenerateQr = () => {
+    // Validamos que haya datos básicos del producto
+    if (
+      !formData.name ||
+      !formData.category ||
+      !formData.description ||
+      !formData.condition
+    ) {
+      alert("Completa los datos del producto antes de generar el QR.");
+      return;
+    }
+
+    // Crear un ID único para el producto
+    const productId = `pub_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    // Información para el QR
+    const payload = JSON.stringify({
+      productId: productId,
+      name: formData.name,
+      category: formData.category,
+      condition: formData.condition,
+      description: formData.description,
+      image: formData.image,
+      location: formData.location,
+      timestamp: new Date().toISOString(),
+      type: "published_product"
+    });
+
+    setQrValue(payload);
+    setShowQr(true);
   };
 
   const handleCancel = () => {
@@ -97,6 +136,8 @@ const ProductPublishModal: React.FC<ProductPublishModalProps> = ({
       image: "",
       location: "",
     });
+    setQrValue(null);
+    setShowQr(false);
     onClose();
   };
 
@@ -262,6 +303,37 @@ const ProductPublishModal: React.FC<ProductPublishModalProps> = ({
             </div>
           )}
 
+          {/* Sección QR */}
+          <div className="publish-qr-section">
+            <button
+              type="button"
+              className="publish-qr-button"
+              onClick={handleGenerateQr}
+              disabled={
+                isSubmitting ||
+                !formData.name ||
+                !formData.category ||
+                !formData.description ||
+                !formData.condition
+              }
+            >
+              {isSubmitting ? "Procesando..." : "🔳 Generar Código QR"}
+            </button>
+          </div>
+
+          {/* Mostrar QR generado */}
+          {showQr && qrValue && (
+            <div className="publish-image-preview">
+              <h4 className="publish-preview-title">Código QR del producto:</h4>
+              <div className="publish-preview-image">
+                <QRCode value={qrValue} size={160} />
+              </div>
+              <small className="publish-form-help">
+                Escanea este código QR para acceder rápidamente a la información del producto
+              </small>
+            </div>
+          )}
+
           {/* Información adicional */}
           <div className="publish-info-section">
             <h4 className="publish-info-title">💡 Consejos para una buena publicación:</h4>
@@ -270,6 +342,7 @@ const ProductPublishModal: React.FC<ProductPublishModalProps> = ({
               <li>Describe honestamente el estado del producto</li>
               <li>Incluye todas las características relevantes</li>
               <li>Especifica si incluye accesorios o manuales</li>
+              <li>Genera el código QR para identificar fácilmente tu producto</li>
             </ul>
           </div>
 
