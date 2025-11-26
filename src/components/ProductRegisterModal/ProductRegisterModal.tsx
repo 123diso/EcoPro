@@ -85,36 +85,19 @@ const ProductRegisterModal: React.FC<ProductRegisterModalProps> = ({
   };
 
   // Función para generar el QR
-  const handleGenerateQr = () => {
-    // Validamos que haya datos básicos del producto
-    if (
-      !formData.name ||
-      !formData.category ||
-      !formData.description ||
-      !formData.condition
-    ) {
-      alert("Completa los datos del producto antes de generar el QR.");
-      return;
-    }
+const handleGenerateQr = () => {
+  if (!formData.name || !formData.category || !formData.description || !formData.condition) {
+    alert("Completa los datos del producto antes de generar el QR.");
+    return;
+  }
 
-    // Crear un ID único para el producto
-    const productId = `prod_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    
-    // Información para el QR
-    const payload = JSON.stringify({
-      productId: productId,
-      name: formData.name,
-      category: formData.category,
-      condition: formData.condition,
-      description: formData.description,
-      image: formData.image,
-      timestamp: new Date().toISOString(),
-      type: "registered_product"
-    });
+  const productId = `prod_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-    setQrValue(payload);
-    setShowQr(true);
-  };
+  const qrURL = `${window.location.origin}/trade/start?productId=${productId}`;
+
+  setQrValue(qrURL);
+  setShowQr(true);
+};
 
   const handleCancel = () => {
     setFormData({

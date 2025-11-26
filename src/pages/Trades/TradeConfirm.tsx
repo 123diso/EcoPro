@@ -1,68 +1,36 @@
-import React, { useEffect, useState } from "react";
+// import React from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
-import "./TradeConfirm.css";
+import { useAuth } from "../../context/useAuthContext";
 
 const TradeConfirm = () => {
   const [params] = useSearchParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
-  const raw = params.get("data");
-  const [payload, setPayload] = useState<any>(null);
-
-  useEffect(() => {
-    if (raw) {
-      try {
-        setPayload(JSON.parse(raw));
-      } catch (e) {
-        console.error("Error parsing QR data:", e);
-      }
-    }
-  }, []);
+  const productA = params.get("productA");
+  const productB = params.get("productB");
 
   const handleConfirm = async () => {
-    if (!payload) return;
+    const { error } = await supabase.from("trades").insert({
+      product_offer_id: productA,
+      product_receive_id: productB,
+      offering_user_id: null, // dueño producto A (si lo sabes)
+      receiving_user_id: user?.id, // usuario B
+      status: "pendiente"
+    });
 
-    const { productId } = payload;
-
-    const { error } = await supabase
-      .from("trades")
-      .update({ status: "en_proceso" })
-      .eq("product_id", productId);
-
-    if (!error) {
-      navigate(`/trade/${productId}`);
-    }
+    if (!error) navigate("/perfil");
   };
 
-  if (!payload) return <p>Cargando...</p>;
-
   return (
-    <div className="trade-confirm-page">
-      <h2 className="trade-confirm-title">
-        <span onClick={() => navigate(-1)}>←</span> Confirmar Trueque
-      </h2>
+    <div style={{ padding: 20 }}>
+      <h1>Confirmar Trueque</h1>
 
-      <div className="trade-confirm-card">
-        <img src={payload.image} alt="Producto" />
+      <p>Producto que quieres obtener: {productA}</p>
+      <p>Producto que vas a ofrecer: {productB}</p>
 
-        <h3 className="trade-confirm-product-name">{payload.name}</h3>
-
-        <p className="trade-confirm-product-info">{payload.category}</p>
-        <p className="trade-confirm-product-info">{payload.condition}</p>
-
-        <div className="trade-confirm-info-box">
-          Estás a punto de confirmar el trueque de este producto.
-        </div>
-
-        <button className="trade-confirm-btn" onClick={handleConfirm}>
-          Confirmar Trueque
-        </button>
-
-        <p className="trade-confirm-hint">
-          Esta acción actualizará el estado del trueque.
-        </p>
-      </div>
+      <button onClick={handleConfirm}>Confirmar Trueque</button>
     </div>
   );
 };

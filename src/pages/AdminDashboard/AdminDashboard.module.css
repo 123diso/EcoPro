@@ -212,3 +212,86 @@
 .resolveBtn:hover {
   background-color: #4a6448;
 }
+
+/* ====== LISTA DE TRUEQUES ====== */
+.tradeList {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 1rem;
+  max-width: 650px;        
+  margin-left: auto;        
+  margin-right: auto;       
+}
+
+/* ====== TARJETA DEL TRUEQUE ====== */
+.tradeCard {
+  background-color: #ffffff;
+  border-radius: 14px;
+  padding: 20px 22px;
+  border: 1px solid #e6e2d5;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  font-family: "Poppins", sans-serif;
+  transition: 0.18s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.tradeCard:hover {
+  transform: translateY(-3px);
+}
+
+/* INFORMACIÓN */
+.tradeInfo h4 {
+  margin: 0 0 10px;
+  font-size: 18px;
+  color: #2d422a;
+  font-weight: 600;
+}
+
+.tradeInfo p {
+  margin: 4px 0;
+  font-size: 14px;
+  color: #444;
+}
+
+.tradeInfo strong {
+  color: #2d422a;
+}
+
+/* ACCIONES */
+.tradeActions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+/* SELECT */
+.tradeSelect {
+  flex: 1;
+  padding: 7px 10px;
+  border-radius: 8px;
+  border: 1px solid #b7b7b7;
+  background: white;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* BOTÓN VER DETALLES */
+.tradeButton {
+  background-color: #2d422a;
+  color: white;
+  padding: 7px 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.tradeButton:hover {
+  background-color: #3d5b38;
+}

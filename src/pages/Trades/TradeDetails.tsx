@@ -1,116 +1,163 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+import "./TradeDetails.css";
 import { useParams, useNavigate } from "react-router-dom";
-import { supabase } from "../../supabaseClient";
-import "./TradeDetails.css"; // ← IMPORTANTE
 
-const TradeDetails = () => {
+const TradeDetails: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [trade, setTrade] = useState<any>(null);
 
-  const fetchTrade = async () => {
-    const { data, error } = await supabase
-      .from("trades")
-      .select("*")
-      .eq("product_id", id)
-      .single();
+  // Datos quemados temporales
+  const trade = {
+    id,
+    status: "Completado",
+    created_at: "2025/07/15",
+    updated_at: "2025/07/17",
 
-    if (!error) setTrade(data);
+    productA: {
+      title: "Saga Harry Potter",
+      image:
+        "https://m.media-amazon.com/images/I/81YOuOGFCJL._AC_UF1000,1000_QL80_.jpg",
+      category: "Entretenimiento",
+      condition: "Pocos usos",
+    },
+
+    productB: {
+      title: "Saga Jujutsu Kaisen",
+      image:
+        "https://cloudfront-us-east-1.images.arcpublishing.com/infobae/ZNM3FD5M2JEKLACQZ447CYBLRE.webp",
+      category: "Entretenimiento",
+      condition: "Pocos usos",
+    },
+
+    users: [
+      {
+        name: "Laura Sánchez",
+        rating: "4.9 / 5",
+        avatar: "https://i.pravatar.cc/150?img=47",
+      },
+      {
+        name: "Diego Hernández",
+        rating: "4.5 / 5",
+        avatar: "https://i.pravatar.cc/150?img=56",
+      },
+    ],
   };
 
-  useEffect(() => {
-    fetchTrade();
-  }, []);
-
-  if (!trade) return <p>Cargando...</p>;
+  const timeline = [
+    { title: "Solicitud iniciada", date: "2025/07/15", hour: "10:00 AM" },
+    {
+      title: "Espera de llegada de productos",
+      date: "2025/07/15",
+      hour: "11:30 PM",
+    },
+    {
+      title: "Productos en sucursal",
+      date: "2025/07/15",
+      hour: "11:38 PM",
+    },
+    {
+      title: "Aprobación trueque",
+      date: "2025/07/15",
+      hour: "1:30 PM",
+    },
+    {
+      title: "Aviso a usuarios",
+      date: "2025/07/15",
+      hour: "11:30 PM",
+    },
+    {
+      title: "Trueque completado",
+      date: "2025/07/15",
+      hour: "11:30 PM",
+    },
+  ];
 
   return (
-    <div className="trade-details-page">
-      <h2 className="trade-details-title">
-        <span onClick={() => navigate(-1)}>←</span>
-        Detalles del trueque
-      </h2>
+    <div className="trade-wrapper">
+      <button className="back-btn" onClick={() => navigate(-1)}>
+        ←
+      </button>
 
-      <div className="trade-details-grid">
-        {/* Resumen */}
-        <div className="trade-summary-box">
-          <h3>Resumen del Trueque</h3>
+      <h1 className="page-title">Detalles del trueque</h1>
 
-          <div className="trade-summary-item">
-            <span>ID del trueque</span>
-            <span>#{trade.product_id}</span>
+      <div className="columns-wrapper">
+        {/* COLUMNA IZQUIERDA */}
+        <div className="left-column">
+          <div className="summary-card">
+            <h2>Resumen del trueque</h2>
+
+            <div className="summary-row">
+              <span>ID del trueque</span>
+              <strong>#{trade.id}</strong>
+            </div>
+
+            <div className="summary-row">
+              <span>Estado</span>
+              <strong className="status approved">✔ Completado</strong>
+            </div>
+
+            <div className="summary-row">
+              <span>Fecha de creación</span>
+              <strong>{trade.created_at}</strong>
+            </div>
+
+            <div className="summary-row">
+              <span>Última actualización</span>
+              <strong>{trade.updated_at}</strong>
+            </div>
           </div>
 
-          <div className="trade-summary-item">
-            <span>Estado</span>
-            <span>
-              {trade.status} <span className="trade-status-icon"></span>
-            </span>
+          <h2 className="section-title">Productos a Intercambiar</h2>
+
+          <div className="products-grid">
+            <div className="product-card">
+              <img src={trade.productA.image} alt="" />
+              <h3>{trade.productA.title}</h3>
+              <small>{trade.productA.category}</small>
+              <p>{trade.productA.condition}</p>
+            </div>
+
+            <div className="product-card">
+              <img src={trade.productB.image} alt="" />
+              <h3>{trade.productB.title}</h3>
+              <small>{trade.productB.category}</small>
+              <p>{trade.productB.condition}</p>
+            </div>
           </div>
 
-          <div className="trade-summary-item">
-            <span>Fecha de creación</span>
-            <span>{trade.timestamp}</span>
-          </div>
+          <h2 className="section-title">Usuarios involucrados</h2>
 
-          <div className="trade-summary-item">
-            <span>Última actualización</span>
-            <span>{trade.updated_at || trade.timestamp}</span>
+          <div className="users-grid">
+            {trade.users.map((u, i) => (
+              <div key={i} className="user-card">
+                <img src={u.avatar} className="avatar" />
+                <div>
+                  <h4>{u.name}</h4>
+                  <small>{u.rating}</small>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Timeline */}
-        <div className="trade-timeline-box">
-          <h3>Historial del Trueque</h3>
+        {/* COLUMNA DERECHA — HISTORIAL */}
+        <div className="right-column">
+          <div className="timeline-card">
+            <h2>Historial del trueque</h2>
 
-          <div className="timeline-list">
-            <div className="timeline-item">
-              <p className="timeline-item-title">Solicitud iniciada</p>
-              <p className="timeline-item-date">{trade.timestamp}</p>
-            </div>
-
-            <div className="timeline-item">
-              <p className="timeline-item-title">En proceso</p>
-              <p className="timeline-item-date">—</p>
-            </div>
-
-            <div className="timeline-item">
-              <p className="timeline-item-title">Aprobación</p>
-              <p className="timeline-item-date">—</p>
-            </div>
-
-            <div className="timeline-item">
-              <p className="timeline-item-title">Trueque completado</p>
-              <p className="timeline-item-date">—</p>
+            <div className="timeline">
+              {timeline.map((t, i) => (
+                <div key={i} className="timeline-item">
+                  <div className="dot" />
+                  <div>
+                    <h4>{t.title}</h4>
+                    <p>{t.date}</p>
+                    <small>{t.hour}</small>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Productos */}
-      <div className="trade-products-box">
-        <h3>Productos a Intercambiar</h3>
-
-        <div className="trade-products-grid">
-          <div className="trade-product-card">
-            <img src={trade.image} alt="Producto" />
-            <h4>{trade.name}</h4>
-            <p>{trade.category}</p>
-            <p>{trade.condition}</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Usuarios — Placeholder */}
-      <div className="trade-users-box">
-        <h3>Usuarios involucrados</h3>
-
-        <div className="trade-user-card">
-          <p>Laura Sánchez</p>
-        </div>
-
-        <div className="trade-user-card">
-          <p>Diego Hernández</p>
         </div>
       </div>
     </div>
