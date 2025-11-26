@@ -1,29 +1,9 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "./TradeCard.css";
+import type { TradeCardProps as TradeCardPropsType } from "../../types/types";
 
-export interface TradeCardProps {
-  tradeId: string;
-  offerProduct: {
-    id: string;
-    title: string;
-    image?: string;
-    category: string;
-    condition: string;
-  };
-  receiveProduct: {
-    id: string;
-    title: string;
-    image?: string;
-    category: string;
-    condition: string;
-  };
-  status: 'pending' | 'accepted' | 'rejected' | 'in_progress' | 'completed' | 'cancelled';
-  isIncoming: boolean;
-  createdAt: string;
-}
-
-const TradeCard: React.FC<TradeCardProps> = ({
+const TradeCard: React.FC<TradeCardPropsType> = ({
   tradeId,
   offerProduct,
   receiveProduct,

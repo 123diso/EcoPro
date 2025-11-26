@@ -10,25 +10,26 @@ import { supabase } from "../supabaseClient";
 import { useAuth } from "./useAuthContext";
 
 export type SavedProduct = {
-  id: number | string;
+  id: string;
   title: string;
   image?: string;
   category?: string;
   condition?: string;
   location?: string;
+  user_id?: string;
 };
 
 type SavedState = { products: Record<string, SavedProduct> };
 
 type SavedContextType = {
   saved: SavedState;
-  isProductSaved: (id: number | string) => boolean;
-  toggleProduct: (item: SavedProduct) => Promise<void>;
+  isProductSaved: (id: string) => boolean;
+  toggleProduct: (item: Omit<SavedProduct, 'user_id'>) => Promise<void>;
   loading: boolean;
+  savedProducts: SavedProduct[];
 };
 
 const SavedContext = createContext<SavedContextType | undefined>(undefined);
-const STORAGE_KEY = "dandi:saved";
 
 export const SavedProvider: React.FC<React.PropsWithChildren> = ({
   children,
@@ -37,7 +38,7 @@ export const SavedProvider: React.FC<React.PropsWithChildren> = ({
   const [saved, setSaved] = useState<SavedState>({ products: {} });
   const [loading, setLoading] = useState(false);
 
-  // Cargar guardados desde Supabase cuando hay usuario
+  // Cargar guardados desde Supabase
   const loadSaved = useCallback(async () => {
     if (!user) {
       setSaved({ products: {} });
@@ -48,51 +49,60 @@ export const SavedProvider: React.FC<React.PropsWithChildren> = ({
     try {
       console.log("Cargando saved_posts para usuario:", user.id);
 
-      const { data: savedRows, error: savedErr } = await supabase
+      // Obtener posts guardados con información completa del producto
+      const { data: savedData, error } = await supabase
         .from("saved_posts")
-        .select("post_id")
+        .select(`
+          post_id,
+          user_posts (
+            id,
+            title,
+            category,
+            condition,
+            location,
+            image,
+            user_id
+          )
+        `)
         .eq("user_id", user.id);
 
-      if (savedErr) {
-        console.error("[saved_posts select error]:", savedErr);
-        // Si la tabla no existe o hay error, retornar vacío sin log de error
+      if (error) {
+        console.error("Error cargando saved_posts:", error);
         setSaved({ products: {} });
         return;
       }
 
-      console.log("Saved rows encontrados:", savedRows);
+      console.log("Saved data encontrado:", savedData);
 
-      const postIds = (savedRows ?? []).map((r) => r.post_id);
-      if (postIds.length === 0) {
-        setSaved({ products: {} });
-        return;
-      }
-
-      // Obtener información de los posts guardados
-      const { data: posts, error: postsErr } = await supabase
-        .from("user_posts")
-        .select("id, title, category, condition, location, image")
-        .in("id", postIds);
-
-      if (postsErr) {
-        console.error("[user_posts select error]:", postsErr);
-        setSaved({ products: {} });
-        return;
-      }
-
-      const products = Object.fromEntries(
-        (posts ?? []).map((row) => [
-          String(row.id),
-          {
-            id: row.id,
-            title: row.title,
-            image: row.image ?? undefined,
-            category: row.category,
-            condition: row.condition,
-            location: row.location,
-          } as SavedProduct,
-        ])
-      );
+      const products: Record<string, SavedProduct> = {};
+      
+      savedData?.forEach(item => {
+        if (item.user_posts && Array.isArray(item.user_posts)) {
+          const post = item.user_posts[0];
+          if (post) {
+            products[post.id] = {
+              id: post.id,
+              title: post.title,
+              image: post.image || undefined,
+              category: post.category,
+              condition: post.condition,
+              location: post.location,
+              user_id: post.user_id
+            };
+          }
+        } else if (item.user_posts && typeof item.user_posts === 'object') {
+          const post = item.user_posts as any;
+          products[post.id] = {
+            id: post.id,
+            title: post.title,
+            image: post.image || undefined,
+            category: post.category,
+            condition: post.condition,
+            location: post.location,
+            user_id: post.user_id
+          };
+        }
+      });
 
       setSaved({ products });
       console.log("Productos guardados cargados:", products);
@@ -109,40 +119,31 @@ export const SavedProvider: React.FC<React.PropsWithChildren> = ({
     loadSaved();
   }, [loadSaved]);
 
-  // Persistencia local como fallback
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
-    } catch {
-      /* noop */
-    }
-  }, [saved]);
-
   const isProductSaved = useCallback(
-    (id: number | string) => Boolean(saved.products[String(id)]),
+    (id: string) => Boolean(saved.products[id]),
     [saved]
   );
 
   const toggleProduct = useCallback(
-    async (item: SavedProduct) => {
+    async (item: Omit<SavedProduct, 'user_id'>) => {
       if (!user) {
         console.warn("Usuario no autenticado, no se puede guardar");
         return;
       }
 
-      const key = String(item.id);
-      const currentlySaved = Boolean(saved.products[key]);
+      const productId = String(item.id);
+      const currentlySaved = Boolean(saved.products[productId]);
 
       setLoading(true);
       try {
         if (currentlySaved) {
           // Eliminar de guardados
-          console.log("Eliminando de guardados:", key);
+          console.log("Eliminando de guardados:", productId);
           const { error } = await supabase
             .from("saved_posts")
             .delete()
             .eq("user_id", user.id)
-            .eq("post_id", key);
+            .eq("post_id", productId);
 
           if (error) {
             console.error("Error al eliminar de guardados:", error);
@@ -151,64 +152,68 @@ export const SavedProvider: React.FC<React.PropsWithChildren> = ({
 
           setSaved((prev) => {
             const next: SavedState = { products: { ...prev.products } };
-            delete next.products[key];
+            delete next.products[productId];
             return next;
           });
           console.log("Producto eliminado de guardados");
 
         } else {
           // Agregar a guardados
-          console.log("Agregando a guardados:", key);
-          const insertPayload = {
-            user_id: user.id,
-            post_id: key,
-            saved_at: new Date().toISOString(),
-          };
+          console.log("Agregando a guardados:", productId);
+          
+          // Verificar que el producto existe antes de guardarlo
+          const { data: productExists, error: checkError } = await supabase
+            .from("user_posts")
+            .select("id")
+            .eq("id", productId)
+            .single();
+
+          if (checkError || !productExists) {
+            console.error("El producto no existe o no se pudo verificar");
+            return;
+          }
 
           const { error } = await supabase
             .from("saved_posts")
-            .insert([insertPayload]);
+            .insert([{
+              user_id: user.id,
+              post_id: productId,
+            }]);
 
           if (error) {
             console.error("Error al guardar producto:", error);
-            // Si hay error de constraint único, puede que ya exista
             if (error.code === '23505') {
               console.log("El producto ya estaba guardado");
             }
-            // Don't return, continue to update local state
+            return;
           }
 
           setSaved((prev) => {
             const next: SavedState = { products: { ...prev.products } };
-            next.products[key] = item;
+            next.products[productId] = { ...item, user_id: user.id };
             return next;
           });
           console.log("Producto guardado exitosamente");
 
-          // Obtener información del dueño del producto para la notificación
+          // Crear notificación para el dueño del producto
           try {
             const { data: productData, error: productError } = await supabase
               .from('user_posts')
               .select('user_id, title')
-              .eq('id', key)
+              .eq('id', productId)
               .single();
 
             if (!productError && productData && productData.user_id !== user.id) {
-              // Crear notificación para el dueño del producto
-              const { error: notifError } = await supabase
+              await supabase
                 .from('notifications')
                 .insert([{
                   user_id: productData.user_id,
                   type: 'saved',
-                  title: 'Alguien guardó tu publicación',
-                  message: `Un usuario guardó tu producto "${productData.title}" en sus favoritos`,
-                  related_product_id: key,
+                  title: '¡Alguien guardó tu publicación!',
+                  message: `A ${user.user_metadata?.username || 'alguien'} le gustó tu producto "${productData.title}"`,
+                  related_product_id: productId,
                   from_user_id: user.id
                 }]);
-
-              if (notifError) {
-                console.error('Error creando notificación:', notifError);
-              }
             }
           } catch (notifError) {
             console.error('Error en notificación de guardado:', notifError);
@@ -223,14 +228,20 @@ export const SavedProvider: React.FC<React.PropsWithChildren> = ({
     [saved, user]
   );
 
+  const savedProducts = useMemo(() => 
+    Object.values(saved.products), 
+    [saved.products]
+  );
+
   const value = useMemo(
     () => ({ 
       saved, 
       isProductSaved, 
       toggleProduct,
-      loading 
+      loading,
+      savedProducts
     }),
-    [saved, isProductSaved, toggleProduct, loading]
+    [saved, isProductSaved, toggleProduct, loading, savedProducts]
   );
   
   return (

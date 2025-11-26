@@ -3,23 +3,23 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useAllProducts } from "../../context/AllProductsContext";
 import { useTrades } from "../../context/TradesContext";
 import { useAuth } from "../../context/useAuthContext";
-import type { DandiPoint, ProductFormData, Product } from "../../types/types";
+import { useUserProducts } from "../../context/UserProductsContext";
+import type { DandiPoint, ProductFormData, Product, BasicProduct } from "../../types/types";
 import ProductRegisterModal from "../../components/ProductRegisterModal/ProductRegisterModal";
 import pointsRaw from "../../assets/dandiPoints.json";
 import productCardsData from "../../assets/productCards.json";
 import LeafletMap from "../../components/Map/LeafletMap";
 import SaveButton from "../../components/SaveButton/SaveButton";
-import { useUserProducts } from "../../context/UserProductsContext";
 import "./ProductDetail.css";
 
 const points: DandiPoint[] = pointsRaw as DandiPoint[];
-const exampleProducts: Product[] = productCardsData as unknown as Product[];
+const exampleProducts: BasicProduct[] = productCardsData as unknown as BasicProduct[];
 
-
-interface ExtendedProduct extends Product {
+interface ExtendedProduct extends BasicProduct {
   user_id?: string;
   user_name?: string;
   user_email?: string;
+  created_at?: string;
 }
 
 export default function ProductDetail() {
@@ -31,9 +31,12 @@ export default function ProductDetail() {
   const { allProducts, refreshProducts } = useAllProducts();
   const { createTrade } = useTrades();
   const { user } = useAuth();
+  const { userProducts } = useUserProducts();
 
   // Buscar producto en productos combinados (ejemplo + reales)
   const product = useMemo(() => {
+    if (!id) return undefined;
+
     // Convertir productos de la BD al formato de Product extendido
     const dbProducts: ExtendedProduct[] = allProducts.map(product => ({
       id: product.id,
@@ -43,10 +46,10 @@ export default function ProductDetail() {
       location: product.location,
       image: product.image,
       description: product.description,
-      created_at: product.created_at,
-      user_id: (product as any).user_id, // Usar type assertion para propiedades extendidas
+      user_id: product.user_id,
       user_name: (product as any).user_name,
-      user_email: (product as any).user_email
+      user_email: (product as any).user_email,
+      created_at: product.created_at
     }));
 
     // Combinar productos de ejemplo con productos reales
@@ -123,9 +126,6 @@ export default function ProductDetail() {
       return;
     }
 
-    // Obtener productos del usuario para ofrecer en trueque
-    const { userProducts } = useUserProducts();
-    
     if (userProducts.length === 0) {
       alert('Necesitas tener productos publicados para proponer un trueque');
       return;
@@ -135,7 +135,7 @@ export default function ProductDetail() {
     const userProductToOffer = userProducts[0];
     
     try {
-      await createTrade(userProductToOffer.id, String(product.id), product.user_id);
+      await createTrade(userProductToOffer.id, String(product.id), user.id, product.user_id);
       alert('✅ Propuesta de trueque enviada correctamente');
     } catch (error) {
       console.error('Error proponiendo trueque:', error);

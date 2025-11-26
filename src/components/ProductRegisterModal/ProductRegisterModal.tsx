@@ -34,7 +34,7 @@ const ProductRegisterModal: React.FC<ProductRegisterModalProps> = ({
     "Hogar",
     "Deportes",
     "Libros",
-    "Juguetes",
+    "Juegos",
     "Otros",
   ];
 

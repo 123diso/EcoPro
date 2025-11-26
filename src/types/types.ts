@@ -34,20 +34,28 @@ export interface SuggestedCardProps {
 
 // Tipos para datos de la aplicación
 export interface Product {
-  id: number | string;  // Acepta ambos tipos
+  id: string;
   title: string;
   category: string;
   condition: string;
   location: string;
   image?: string;
-  price?: string;
-  user?: string;
   description?: string;
-  sellerName?: string;
-  sellerRating?: string;
-  sellerStats?: string;
-  images?: string[];
-  available?: string;
+  created_at: string;
+  user_id: string;
+  user_name?: string;
+  user_email?: string;
+}
+
+// Producto básico para componentes que no necesitan todos los campos
+export interface BasicProduct {
+  id: string;
+  title: string;
+  category: string;
+  condition: string;
+  location: string;
+  image?: string;
+  description?: string;
 }
 
 export interface DandiPoint {
@@ -117,12 +125,16 @@ export interface AuthFormData {
 // Tipos para notificaciones
 export interface NotificationItem {
   id: string;
+  user_id: string;
+  type: 'saved' | 'trade_proposal' | 'trade_update';
   title: string;
   message: string;
-  type: "trade" | "message" | "system" | "alert";
-  isRead: boolean;
-  createdAt: string;
-  fromUser?: string;
+  related_product_id?: string;
+  related_trade_id?: string;
+  from_user_id?: string;
+  from_user_name?: string;
+  is_read: boolean;
+  created_at: string;
 }
 
 // Tipos para usuario
@@ -139,17 +151,18 @@ export interface UserProfile {
 
 // Tipos para contexto de guardados
 export interface SavedProduct {
-  id: number | string;
+  id: string;
   title: string;
   image?: string;
   category?: string;
   condition?: string;
   location?: string;
+  user_id?: string;
 }
 
 // Tipos para SaveButton
 export interface SaveButtonProps {
-  id: number | string;
+  id: string;
   title: string;
   category: string;
   condition: string;
@@ -167,8 +180,48 @@ export interface Trade {
   status: 'pending' | 'accepted' | 'rejected' | 'in_progress' | 'completed' | 'cancelled';
   created_at: string;
   updated_at: string;
-  offer_product?: any;
-  receive_product?: any;
+  offer_product?: Product;
+  receive_product?: Product;
   offering_user?: any;
   receiving_user?: any;
+}
+
+// Tipos para productos de usuario
+export interface UserProduct {
+  id: string;
+  title: string;
+  category: string;
+  condition: string;
+  description: string;
+  location: string;
+  image?: string;
+  created_at: string;
+  user_id: string;
+}
+
+// Tipos para el contexto de productos
+export interface AllProductsContextType {
+  allProducts: Product[];
+  loading: boolean;
+  fetchAllProducts: () => Promise<void>;
+  refreshProducts: () => Promise<void>;
+}
+
+// Tipos para TradeCard
+export interface TradeProduct {
+  id: string;
+  title: string;
+  image?: string;
+  category: string;
+  condition: string;
+  description?: string;
+}
+
+export interface TradeCardProps {
+  tradeId: string;
+  offerProduct: TradeProduct;
+  receiveProduct: TradeProduct;
+  status: 'pending' | 'accepted' | 'rejected' | 'in_progress' | 'completed' | 'cancelled';
+  isIncoming: boolean;
+  createdAt: string;
 }

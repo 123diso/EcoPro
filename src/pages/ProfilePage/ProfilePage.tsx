@@ -9,7 +9,7 @@ import ProductPublishModal from "../../components/ProductPublishModal/ProductPub
 import type { ProductFormData } from "../../types/types";
 import "./ProfilePage.css";
 
-export const ProfilePage: React.FC = () => {
+const ProfilePage: React.FC = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"guardados" | "posts">("posts");
@@ -225,3 +225,5 @@ export const ProfilePage: React.FC = () => {
     </>
   );
 };
+
+export default ProfilePage;

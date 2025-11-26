@@ -13,7 +13,7 @@ import PuntoDetalle from "./pages/PuntoDetalle/PuntoDetalle";
 import RecentProductsPage from "./pages/RecentProductsPage/RecentProductsPage";
 import { LoginPage } from "./pages/LoginPage/LoginPage";
 import { RegisterPage } from "./pages/RegisterPage/RegisterPage";
-import { ProfilePage } from "./pages/ProfilePage/ProfilePage";
+import ProfilePage from "./pages/ProfilePage/ProfilePage";
 import SettingsPage from "./pages/SettingsPage/SettingsPage";
 import NotificationsPage from "./pages/NotificationsPage/NotificationsPage";
 import CategoriesPage from "./pages/CategoriesPage/CategoriesPage";

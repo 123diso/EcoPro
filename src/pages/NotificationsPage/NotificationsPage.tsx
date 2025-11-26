@@ -5,6 +5,7 @@ import { useTrades } from "../../context/TradesContext";
 import { useAuth } from "../../context/useAuthContext";
 import TradeCard from "../../components/TradeCard/TradeCard";
 import "./NotificationsPage.css";
+import type { TradeProduct } from "../../types/types";
 
 const NotificationsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -88,6 +89,18 @@ const NotificationsPage: React.FC = () => {
     if (diffHours > 1) return `Hace ${diffHours} horas`;
     
     return "Hace unos minutos";
+  };
+
+  // Convertir producto a TradeProduct
+  const convertToTradeProduct = (product: any): TradeProduct => {
+    return {
+      id: product.id || '',
+      title: product.title || 'Producto sin título',
+      image: product.image,
+      category: product.category || 'Sin categoría',
+      condition: product.condition || 'Desconocido',
+      description: product.description
+    };
   };
 
   if (notificationsLoading || tradesLoading) {
@@ -260,8 +273,8 @@ const NotificationsPage: React.FC = () => {
                   <TradeCard
                     key={trade.id}
                     tradeId={trade.id}
-                    offerProduct={trade.offer_product}
-                    receiveProduct={trade.receive_product}
+                    offerProduct={convertToTradeProduct(trade.offer_product)}
+                    receiveProduct={convertToTradeProduct(trade.receive_product)}
                     status={trade.status}
                     isIncoming={trade.receiving_user_id === user?.id}
                     createdAt={trade.created_at}
@@ -280,8 +293,8 @@ const NotificationsPage: React.FC = () => {
                   <TradeCard
                     key={trade.id}
                     tradeId={trade.id}
-                    offerProduct={trade.offer_product}
-                    receiveProduct={trade.receive_product}
+                    offerProduct={convertToTradeProduct(trade.offer_product)}
+                    receiveProduct={convertToTradeProduct(trade.receive_product)}
                     status={trade.status}
                     isIncoming={true}
                     createdAt={trade.created_at}
@@ -300,8 +313,8 @@ const NotificationsPage: React.FC = () => {
                   <TradeCard
                     key={trade.id}
                     tradeId={trade.id}
-                    offerProduct={trade.offer_product}
-                    receiveProduct={trade.receive_product}
+                    offerProduct={convertToTradeProduct(trade.offer_product)}
+                    receiveProduct={convertToTradeProduct(trade.receive_product)}
                     status={trade.status}
                     isIncoming={false}
                     createdAt={trade.created_at}
