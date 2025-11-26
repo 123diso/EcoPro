@@ -47,7 +47,7 @@ export const SavedProvider: React.FC<React.PropsWithChildren> = ({
     setLoading(true);
     try {
       console.log("Cargando saved_posts para usuario:", user.id);
-      
+
       const { data: savedRows, error: savedErr } = await supabase
         .from("saved_posts")
         .select("post_id")
@@ -55,13 +55,9 @@ export const SavedProvider: React.FC<React.PropsWithChildren> = ({
 
       if (savedErr) {
         console.error("[saved_posts select error]:", savedErr);
-        // Si la tabla no existe, retornar vacío
-        if (savedErr.code === '42P01') { // tabla no existe
-          console.warn("La tabla saved_posts no existe aún");
-          setSaved({ products: {} });
-          return;
-        }
-        throw savedErr;
+        // Si la tabla no existe o hay error, retornar vacío sin log de error
+        setSaved({ products: {} });
+        return;
       }
 
       console.log("Saved rows encontrados:", savedRows);
@@ -80,6 +76,7 @@ export const SavedProvider: React.FC<React.PropsWithChildren> = ({
 
       if (postsErr) {
         console.error("[user_posts select error]:", postsErr);
+        setSaved({ products: {} });
         return;
       }
 
@@ -96,7 +93,7 @@ export const SavedProvider: React.FC<React.PropsWithChildren> = ({
           } as SavedProduct,
         ])
       );
-      
+
       setSaved({ products });
       console.log("Productos guardados cargados:", products);
 
@@ -178,7 +175,7 @@ export const SavedProvider: React.FC<React.PropsWithChildren> = ({
             if (error.code === '23505') {
               console.log("El producto ya estaba guardado");
             }
-            return;
+            // Don't return, continue to update local state
           }
 
           setSaved((prev) => {
@@ -187,6 +184,35 @@ export const SavedProvider: React.FC<React.PropsWithChildren> = ({
             return next;
           });
           console.log("Producto guardado exitosamente");
+
+          // Obtener información del dueño del producto para la notificación
+          try {
+            const { data: productData, error: productError } = await supabase
+              .from('user_posts')
+              .select('user_id, title')
+              .eq('id', key)
+              .single();
+
+            if (!productError && productData && productData.user_id !== user.id) {
+              // Crear notificación para el dueño del producto
+              const { error: notifError } = await supabase
+                .from('notifications')
+                .insert([{
+                  user_id: productData.user_id,
+                  type: 'saved',
+                  title: 'Alguien guardó tu publicación',
+                  message: `Un usuario guardó tu producto "${productData.title}" en sus favoritos`,
+                  related_product_id: key,
+                  from_user_id: user.id
+                }]);
+
+              if (notifError) {
+                console.error('Error creando notificación:', notifError);
+              }
+            }
+          } catch (notifError) {
+            console.error('Error en notificación de guardado:', notifError);
+          }
         }
       } catch (error) {
         console.error("Error en toggleProduct:", error);

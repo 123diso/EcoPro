@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAllProducts } from "../../context/AllProductsContext";
+import { useTrades } from "../../context/TradesContext";
+import { useAuth } from "../../context/useAuthContext";
 import type { DandiPoint, ProductFormData, Product } from "../../types/types";
 import ProductRegisterModal from "../../components/ProductRegisterModal/ProductRegisterModal";
 import pointsRaw from "../../assets/dandiPoints.json";
@@ -13,6 +15,13 @@ import "./ProductDetail.css";
 const points: DandiPoint[] = pointsRaw as DandiPoint[];
 const exampleProducts: Product[] = productCardsData as unknown as Product[];
 
+
+interface ExtendedProduct extends Product {
+  user_id?: string;
+  user_name?: string;
+  user_email?: string;
+}
+
 export default function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -20,11 +29,13 @@ export default function ProductDetail() {
   const [registerStatus, setRegisterStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const { addProduct } = useUserProducts();
   const { allProducts, refreshProducts } = useAllProducts();
+  const { createTrade } = useTrades();
+  const { user } = useAuth();
 
   // Buscar producto en productos combinados (ejemplo + reales)
   const product = useMemo(() => {
-    // Convertir productos de la BD al formato de Product
-    const dbProducts: Product[] = allProducts.map(product => ({
+    // Convertir productos de la BD al formato de Product extendido
+    const dbProducts: ExtendedProduct[] = allProducts.map(product => ({
       id: product.id,
       title: product.title,
       category: product.category,
@@ -32,14 +43,17 @@ export default function ProductDetail() {
       location: product.location,
       image: product.image,
       description: product.description,
-      user_name: product.user_name
+      created_at: product.created_at,
+      user_id: (product as any).user_id, // Usar type assertion para propiedades extendidas
+      user_name: (product as any).user_name,
+      user_email: (product as any).user_email
     }));
 
     // Combinar productos de ejemplo con productos reales
     const allProductsCombined = [...exampleProducts, ...dbProducts];
     
     // Buscar el producto por ID
-    return allProductsCombined.find((p) => String(p.id) === id);
+    return allProductsCombined.find((p) => String(p.id) === id) as ExtendedProduct | undefined;
   }, [allProducts, id]);
 
   const matchedPoint: DandiPoint | null = useMemo(() => {
@@ -95,6 +109,37 @@ export default function ProductDetail() {
       setTimeout(() => {
         setRegisterStatus("idle");
       }, 3000);
+    }
+  };
+
+  const handleProposeTrade = async () => {
+    if (!user) {
+      alert('Debes iniciar sesión para proponer un trueque');
+      return;
+    }
+
+    if (!product || !product.user_id) {
+      alert('No se puede proponer trueque para este producto');
+      return;
+    }
+
+    // Obtener productos del usuario para ofrecer en trueque
+    const { userProducts } = useUserProducts();
+    
+    if (userProducts.length === 0) {
+      alert('Necesitas tener productos publicados para proponer un trueque');
+      return;
+    }
+
+    // Por simplicidad, usar el primer producto del usuario
+    const userProductToOffer = userProducts[0];
+    
+    try {
+      await createTrade(userProductToOffer.id, String(product.id), product.user_id);
+      alert('✅ Propuesta de trueque enviada correctamente');
+    } catch (error) {
+      console.error('Error proponiendo trueque:', error);
+      alert('❌ Error al enviar la propuesta de trueque');
     }
   };
 
@@ -185,7 +230,7 @@ export default function ProductDetail() {
           {/* Detalles */}
           <h2 className="section-title">Detalles</h2>
           <p className="prod-desc">
-            {product.description || "Descripcion no disponible. Este articulo se ofrece para trueque en la ubicacion indicada."}
+            {product.description || "Descripción no disponible. Este artículo se ofrece para trueque en la ubicación indicada."}
           </p>
 
           {/* Publicado por */}
@@ -195,7 +240,7 @@ export default function ProductDetail() {
               <img className="seller__avatar" src="/avatars/default.png" alt="" />
               <div className="seller__info">
                 <div className="seller__name">
-                  {(product as any).user_name || "Usuario Dandi"}
+                  {product.user_name || "Usuario Dandi"}
                 </div>
                 <div className="seller__stats">
                   Miembro de Dandi
@@ -230,6 +275,17 @@ export default function ProductDetail() {
             >
               {registerStatus === "loading" ? "Registrando..." : "Hacer trueque"}
             </button>
+            
+            {/* Botón para proponer trueque - solo mostrar si el usuario no es el dueño */}
+            {user && product.user_id && user.id !== product.user_id && (
+              <button 
+                className="btn-trade-proposal"
+                onClick={handleProposeTrade}
+              >
+                🔄 Proponer Trueque
+              </button>
+            )}
+            
             <button className="btn-ghost">Reportar</button>
           </div>
 

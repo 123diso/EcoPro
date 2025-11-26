@@ -25,6 +25,9 @@ import { UserProductsProvider } from "./context/UserProductsContext";
 import { SettingsProvider } from "./context/SettingsContext";
 import { AllProductsProvider } from "./context/AllProductsContext";
 import ProductDetail from "./pages/ProductDetail/ProductDetail";
+import { NotificationsProvider } from "./context/NotificationsContext";
+import { TradesProvider } from "./context/TradesContext";
+import TradeDetailPage from "./pages/TradeDetailPage/TradeDetailPage";
 import "./App.css";
 
 /* ---------- Layout autenticado ---------- */
@@ -33,8 +36,12 @@ const Layout: React.FC = () => (
     <UserProductsProvider>
       <SettingsProvider>
         <AllProductsProvider>
-          <Navbar />
-          <Outlet />
+          <NotificationsProvider>  {/* NUEVO */}
+          <TradesProvider>         {/* NUEVO */}
+            <Navbar />
+            <Outlet />
+          </TradesProvider>
+          </NotificationsProvider>
         </AllProductsProvider>
       </SettingsProvider>
     </UserProductsProvider>
@@ -90,7 +97,8 @@ const router = createBrowserRouter([
       { path: "perfil", element: <ProfilePage /> },
       { path: "configuracion", element: <SettingsPage /> },
       { path: "producto/:id", element: <ProductDetail /> },
-      { path: "notificaciones", element: <NotificationsPage /> },
+      {path: "notificaciones", element: <NotificationsPage />},
+      {path: "trade/:tradeId", element: <TradeDetailPage />},
       { path: "*", element: <Navigate to="/" replace /> },
     ],
   },

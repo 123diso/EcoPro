@@ -276,3 +276,47 @@
   color: #721c24;
   border: 1px solid #f5c6cb;
 }
+
+.btn-trade-proposal {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin: 8px;
+}
+
+.btn-trade-proposal:hover {
+  background: linear-gradient(135deg, #218838, #1ea085);
+  transform: translateY(-1px);
+}
+
+/* Ajustar el contenedor de acciones para múltiples botones */
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.actions button {
+  width: 100%;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .actions button {
+    width: auto;
+    flex: 1;
+    min-width: 200px;
+  }
+}

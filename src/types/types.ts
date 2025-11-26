@@ -156,3 +156,19 @@ export interface SaveButtonProps {
   location: string;
   image?: string;
 }
+
+// Tipos para trueques
+export interface Trade {
+  id: string;
+  product_offer_id: string;
+  product_receive_id: string;
+  offering_user_id: string;
+  receiving_user_id: string;
+  status: 'pending' | 'accepted' | 'rejected' | 'in_progress' | 'completed' | 'cancelled';
+  created_at: string;
+  updated_at: string;
+  offer_product?: any;
+  receive_product?: any;
+  offering_user?: any;
+  receiving_user?: any;
+}
