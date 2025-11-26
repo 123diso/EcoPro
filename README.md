@@ -1,73 +1,193 @@
-# React + TypeScript + Vite
+# Dandi-Eco — README
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Dandi-Eco es una aplicación web construida con React + TypeScript, integrada con Supabase para autenticación, gestión de usuarios, publicaciones, configuración de usuarios y trueques de productos entre personas.
+El proyecto permite a los usuarios publicar productos, registrarlos para trueques, generar códigos QR, navegar a través de tiendas Dandi cercanas en un mapa donde están las tiendas, y realizar intercambios entre usuarios gracias a un administrador que puede supervisar los trueques y estados de los productos.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Tecnologías utilizadas
 
-## React Compiler
+### Frontend
+• React + TypeScript  
+• React Router DOM  
+• React Context API  
+• Hooks personalizados  
+• Leaflet + React-Leaflet  
+• react-qr-code  
+• CSS Modules y estilos locales  
+• JSON assets para categorías, puntos Dandi, productos sugeridos, etc.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Backend (BaaS)
+• Supabase  
+• Autenticación  
+• Base de datos PostgreSQL  
+• Row Level Security (RLS)  
+• Realtime Subscriptions  
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Estructura del proyecto
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+'''
+eco-pro/
++-- public/
++-- src/
+¦   +-- assets/          # JSONs, imágenes, íconos, logos
+¦   +-- components/      # Componentes reutilizables de UI
+¦   +-- context/         # Contextos globales (Auth, Products, Settings...)
+¦   +-- hooks/           # Hooks personalizados
+¦   +-- pages/           # Páginas completas (Home, Mapa, Perfil, Admin...)
+¦   +-- services/        # Llamadas a Supabase y lógica de negocio
+¦   +-- types/           # Tipos TypeScript compartidos
+¦   +-- utils/           # Utilidades generales
+¦
++-- App.tsx              # Definición de rutas y layout principal
++-- App.css
++-- main.tsx             # Punto de entrada de React
++-- supabaseClient.ts    # Cliente de Supabase, variables
++-- vite.config.ts
++-- tsconfig*.json
++-- .env                 # Variables de entorno
+'''
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+---
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Flujo general de la aplicación
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Autenticación
+• Login y registro con AuthForm y useAuthActions.  
+• Se guarda metadata del usuario (full_name, username).  
+• Se crea automáticamente un perfil en la tabla profiles.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Publicar producto
+• Desde el perfil (ProfilePage) se abre ProductPublishModal.  
+• El producto se guarda en user_posts.  
+• AllProductsContext escucha cambios en tiempo real desde Supabase.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### Iniciar un trueque
+Desde ProductDetail, el usuario puede:  
+• Ver la tienda asociada al producto.  
+• Abrir ProductRegisterModal.  
+• Generar un QR con los datos necesarios.  
+
+Flujo:  
+1. Usuario abre/escanea un QR ? TradeStart.  
+2. Selecciona qué producto quiere ofrecer.  
+3. TradeConfirm registra el trueque en la tabla trades.
+
+### Confirmar y administrar trueques
+• TradeConfirm inserta un nuevo registro en trades.  
+• El panel admin (AdminDashboard) permite ver trueques y cambiar estados.  
+• También gestiona reportes y publicaciones.
+
+### Mapa
+• MapPage carga tiendas desde dandiPoints.json.  
+• Se muestra la ubicación del usuario.  
+• Se resaltan las tiendas donde el usuario tiene publicaciones.  
+• Al seleccionar una tienda ? PuntoDetalle.
+
+### Perfil y guardados
+• ProfilePage muestra:  
+  - Publicaciones propias 
+- Opción para cerrar sesión o ir al modo administrador.
+
+### Ajustes
+SettingsPage permite:  
+• Activar/desactivar notificaciones  
+• Cambiar idioma  
+• Actualizar ubicación  
+• Cerrar sesión  
+
+---
+
+# Tablas de Supabase (Resumen)
+
+Un resumen de las tablas utilizadas por la aplicación.
+
+---
+
+## profiles
+Información básica del usuario.
+
+• id (uuid) – Identificador del usuario  
+• email (text) – Correo  
+• full_name (text) – Nombre completo  
+• username (text) – Alias  
+• avatar_url (text) – Imagen  
+• created_at / updated_at – Fechas del registro  
+
+---
+
+## user_posts
+Publicaciones de productos.
+
+• id (uuid) – Producto  
+• user_id (uuid) – Autor  
+• title (text) – Título  
+• category (text) – Categoría  
+• description (text) – Descripción  
+• condition (text) – Estado del producto  
+• location (text) – Tienda Dandi asignada  
+• image (text) – Imagen del producto  
+• qr_code_url (text) – QR opcional  
+• created_at / updated_at – Fechas del registro  
+
+---
+
+## user_settings
+Preferencias del usuario.
+
+• notifications (boolean) – Activar o no  
+• dark_mode (boolean) – Modo oscuro  
+• location (text) – Ubicación  
+• language (text) – Idioma  
+• user_id (uuid) – Usuario dueño  
+
+---
+
+## notifications
+Notificaciones enviadas al usuario.
+
+• type – Tipo de notificación  
+• title – Título  
+• message – Contenido  
+• related_product_id – Producto relacionado  
+• related_trade_id – Trueque asociado  
+• from_user_id – Usuario que originó la notificación  
+• is_read – Estado de lectura  
+• created_at – Fecha  
+
+---
+
+## reports
+Reportes de productos.
+
+• product_id – Producto reportado  
+• user_id – Usuario que reporta  
+• title – Motivo  
+• description – Detalle  
+• status – Estado del reporte  
+• created_at – Fecha  
+
+---
+
+## saved_posts
+Productos guardados por usuarios.
+
+• user_id – Usuario  
+• post_id – Producto guardado  
+• saved_at – Fecha de guardado  
+
+---
+
+## trades
+Trueques registrados.
+
+• product_offer_id – Producto ofrecido  
+• product_receive_id – Producto que se quiere obtener  
+• offering_user_id – Usuario que ofrece  
+• receiving_user_id – Usuario que recibe  
+• status – Estado del trueque  
+• created_at / updated_at – Fechas  
+
+---
