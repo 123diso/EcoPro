@@ -9,7 +9,7 @@ const MapBanner: React.FC = () => {
   return (
     <div className="map-banner" role="region" aria-label="Intercambia cerca">
       <img
-        src="/bannermap.svg"
+        src="/Frame 4.png"
         alt=""
         className="map-banner__bg"
         aria-hidden="true"

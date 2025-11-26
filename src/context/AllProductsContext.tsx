@@ -31,28 +31,23 @@ export const AllProductsProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const fetchAllProducts = useCallback(async () => {
     setLoading(true);
     try {
-      // Obtener todos los posts con información del usuario
+      // Consulta simplificada y más robusta
       const { data: postsData, error: postsError } = await supabase
         .from('user_posts')
-        .select(`
-          *,
-          user:user_id (
-            email,
-            user_metadata
-          )
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
 
       if (postsError) {
         console.error('Error fetching all products:', postsError);
-        throw postsError;
+        setAllProducts([]);
+        return;
       }
 
-      // Transformar los datos para incluir información del usuario
+      // Para obtener información del usuario si es necesario
       const productsWithUserInfo = postsData?.map(post => ({
         ...post,
-        user_email: post.user?.email,
-        user_name: post.user?.user_metadata?.username || post.user?.user_metadata?.full_name || 'Usuario Dandi'
+        user_email: 'usuario@dandi.com', // Placeholder temporal
+        user_name: 'Usuario Dandi' // Placeholder temporal
       })) || [];
 
       setAllProducts(productsWithUserInfo);
@@ -71,6 +66,32 @@ export const AllProductsProvider: React.FC<{ children: React.ReactNode }> = ({ c
   // Cargar productos al inicializar
   useEffect(() => {
     fetchAllProducts();
+  }, [fetchAllProducts]);
+
+  // Suscripción en tiempo real a cambios en user_posts
+  useEffect(() => {
+    const subscription = supabase
+      .channel('public:user_posts')
+      .on(
+        'postgres_changes',
+        {
+          event: '*', // Escuchar INSERT, UPDATE, DELETE
+          schema: 'public',
+          table: 'user_posts'
+        },
+        (payload) => {
+          console.log('Cambio detectado en user_posts:', payload);
+          
+          // Refrescar los productos cuando haya cambios
+          fetchAllProducts();
+        }
+      )
+      .subscribe();
+
+    // Limpiar suscripción al desmontar
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [fetchAllProducts]);
 
   return (

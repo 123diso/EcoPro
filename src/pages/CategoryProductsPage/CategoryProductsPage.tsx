@@ -14,15 +14,15 @@ const CategoryProductsPage: React.FC = () => {
   const navigate = useNavigate();
   const { allProducts, loading } = useAllProducts();
 
-  // Cargar categorías desde archivos JSON
+  // Cargar categorias desde archivos JSON
   const categories = categoriesData;
 
-  // Encontrar la categoría actual
+  // Encontrar la categoria actual
   const currentCategory = useMemo(() => {
     return categories.find(cat => cat.id === categoryId);
   }, [categoryId, categories]);
 
-  // Combinar productos de ejemplo con productos reales y filtrar por categoría
+  // Combinar productos de ejemplo con productos reales y filtrar por categoria
   const categoryProducts = useMemo((): Product[] => {
     if (!categoryId || !currentCategory) return [];
     
@@ -40,19 +40,19 @@ const CategoryProductsPage: React.FC = () => {
     // Combinar productos de ejemplo con productos reales
     const allProductsCombined = [...exampleProducts, ...dbProducts];
     
-    // Filtrar por categoría
+    // Filtrar por categoria (comparacion case-insensitive)
     return allProductsCombined.filter(product => 
       product.category.toLowerCase() === currentCategory.name.toLowerCase()
     );
   }, [categoryId, currentCategory, allProducts]);
 
-  // Si la categoría no existe, redirigir
+  // Si la categoria no existe, redirigir
   if (!currentCategory) {
     return (
       <div className="category-not-found">
-        <h1>Categoría no encontrada</h1>
+        <h1>Categoria no encontrada</h1>
         <button onClick={() => navigate("/categorias")} className="back-button">
-          Volver a categorías
+          Volver a categorias
         </button>
       </div>
     );
@@ -70,12 +70,12 @@ const CategoryProductsPage: React.FC = () => {
 
   return (
     <div className="category-products-page">
-      {/* Botón de volver */}
+      {/* Boton de volver */}
       <button 
         onClick={() => navigate("/categorias")} 
         className="back-to-categories"
       >
-        ← Volver a categorías
+        Volver a categorias
       </button>
 
       {/* Componente reutilizable de grid de productos */}
@@ -83,7 +83,7 @@ const CategoryProductsPage: React.FC = () => {
         products={categoryProducts}
         categoryName={currentCategory.name}
         showSearch={true}
-        emptyMessage={`No hay productos en la categoría ${currentCategory.name}`}
+        emptyMessage={`No hay productos en la categoria ${currentCategory.name}`}
       />
     </div>
   );

@@ -1,0 +1,130 @@
+.recent-products {
+  margin: 0 8%;
+  padding: 18px 0 22px;
+}
+
+.recent-products__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.recent-products__title {
+  color: #2E3F21;
+  font-size: 1.8rem;
+  font-weight: 700;
+  background: #2E3F21;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+}
+
+.products-section__list {
+  display: grid;
+  gap: 22px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: start;
+}
+
+/* breakpoints para la grid */
+@media (max-width: 1200px) {
+  .products-section__list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .products-section__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 580px) {
+  .products-section__list {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Estados */
+.recent-products .loading-container {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.no-recent-products {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: #f8f9fa;
+  border-radius: 16px;
+  border: 2px dashed #E4A868;
+}
+
+.no-recent-products .empty-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.no-recent-products h3 {
+  color: #2E3F21;
+  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+}
+
+.no-recent-products p {
+  color: #666;
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
+}
+
+.create-first-btn {
+  margin-top: 1rem;
+  background: linear-gradient(135deg, #E4A868, #C78E4E);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+.create-first-btn:hover {
+  transform: translateY(-2px);
+  color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .recent-products {
+    margin: 0 5%;
+    padding: 1.5rem 0;
+  }
+
+  .recent-products__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .recent-products__title {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .no-recent-products {
+    padding: 2rem 1rem;
+  }
+
+  .no-recent-products .empty-icon {
+    font-size: 3rem;
+  }
+}

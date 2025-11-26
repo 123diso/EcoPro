@@ -46,59 +46,62 @@ export const SavedProvider: React.FC<React.PropsWithChildren> = ({
   // Cargar guardados desde Supabase cuando hay usuario
   useEffect(() => {
     const loadSaved = async () => {
-      if (!user) {
-        setSaved({ products: {} });
-        return;
-      }
-      const { data: savedRows, error: savedErr } = await supabase
-        .from("saved_post")
-        .select("post_id")
-        .eq("user_id", user.id);
+  if (!user) {
+    setSaved({ products: {} });
+    return;
+  }
+  
+  const { data: savedRows, error: savedErr } = await supabase
+    .from("saved_posts")  // CAMBIADO
+    .select("post_id")
+    .eq("user_id", user.id);
 
-      if (savedErr) {
-        console.error("[saved_post select error]:", savedErr);
-        return;
-      }
+  if (savedErr) {
+    console.error("[saved_posts select error]:", savedErr);
+    return;
+  }
 
-      const postIds = (savedRows ?? []).map((r) => r.post_id);
-      if (postIds.length === 0) {
-        setSaved({ products: {} });
-        return;
-      }
+  const postIds = (savedRows ?? []).map((r) => r.post_id);
+  if (postIds.length === 0) {
+    setSaved({ products: {} });
+    return;
+  }
 
-      const { data: posts, error: postsErr } = await supabase
-        .from("user_posts")
-        .select("id,title,category,condition,location,image")
-        .in("id", postIds);
+  const { data: posts, error: postsErr } = await supabase
+    .from("user_posts")
+    .select("id,title,category,condition,location,image")
+    .in("id", postIds);
 
-      if (postsErr) {
-        console.error("[user_posts select error]:", postsErr);
-        return;
-      }
+  if (postsErr) {
+    console.error("[user_posts select error]:", postsErr);
+    return;
+  }
 
-      type DbPost = {
-        id: number | string;
-        title: string;
-        category: string;
-        condition: string;
-        location: string;
-        image?: string | null;
-      };
-      const products = Object.fromEntries(
-        (posts ?? []).map((row: DbPost) => [
-          String(row.id),
-          {
-            id: row.id,
-            title: row.title,
-            image: row.image ?? undefined,
-            category: row.category,
-            condition: row.condition,
-            location: row.location,
-          } as SavedProduct,
-        ])
-      );
-      setSaved({ products });
-    };
+  type DbPost = {
+    id: number | string;
+    title: string;
+    category: string;
+    condition: string;
+    location: string;
+    image?: string | null;
+  };
+  
+  const products = Object.fromEntries(
+    (posts ?? []).map((row: DbPost) => [
+      String(row.id),
+      {
+        id: row.id,
+        title: row.title,
+        image: row.image ?? undefined,
+        category: row.category,
+        condition: row.condition,
+        location: row.location,
+      } as SavedProduct,
+    ])
+  );
+  setSaved({ products });
+};
+
     void loadSaved();
   }, [user]);
 
@@ -125,7 +128,7 @@ export const SavedProvider: React.FC<React.PropsWithChildren> = ({
       if (currentlySaved) {
         const postIdValue = Number.isNaN(Number(key)) ? key : Number(key);
         const { error } = await supabase
-          .from("saved_post")
+          .from("saved_posts")
           .delete()
           .eq("user_id", user.id)
           .eq("post_id", postIdValue);
@@ -146,7 +149,7 @@ export const SavedProvider: React.FC<React.PropsWithChildren> = ({
           saved_at: new Date().toISOString(),
         };
         const { error } = await supabase
-          .from("saved_post")
+          .from("saved_posts")
           .insert({ ...insertPayload });
         if (error) {
           return;

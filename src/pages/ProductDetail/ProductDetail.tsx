@@ -75,7 +75,7 @@ export default function ProductDetail() {
         description: productData.description,
         condition: productData.condition,
         image: productData.image,
-        location: "Tu ubicación"
+        location: productData.location
       });
       
       // Refrescar todos los productos para que aparezca inmediatamente
@@ -103,7 +103,7 @@ export default function ProductDetail() {
       case "loading":
         return "Registrando producto...";
       case "success":
-        return "¡Producto registrado exitosamente!";
+        return "Producto registrado exitosamente!";
       case "error":
         return "Error al registrar el producto. Intenta nuevamente.";
       default:
@@ -116,7 +116,7 @@ export default function ProductDetail() {
       <main className="prod-layout">
         <section className="prod-left">
           <button className="back" onClick={() => navigate(-1)}>
-            ←
+            Volver
           </button>
           <p>Producto no encontrado.</p>
         </section>
@@ -132,7 +132,7 @@ export default function ProductDetail() {
         {/* Columna izquierda */}
         <section className="prod-left">
           <button className="back" onClick={() => navigate(-1)}>
-            ←
+            Volver
           </button>
 
           {/* Hero card */}
@@ -168,7 +168,7 @@ export default function ProductDetail() {
                   <div className="prod-loc">{product.location}</div>
                 </div>
 
-                {/* mini-galería */}
+                {/* mini-galeria */}
                 <div className="prod-thumbs">
                   {gallery.slice(0, 5).map((src, i) => (
                     <div
@@ -185,7 +185,7 @@ export default function ProductDetail() {
           {/* Detalles */}
           <h2 className="section-title">Detalles</h2>
           <p className="prod-desc">
-            {product.description || "Descripción no disponible. Este artículo se ofrece para trueque en la ubicación indicada."}
+            {product.description || "Descripcion no disponible. Este articulo se ofrece para trueque en la ubicacion indicada."}
           </p>
 
           {/* Publicado por */}
@@ -202,19 +202,19 @@ export default function ProductDetail() {
                 </div>
               </div>
               <button className="seller__btn" aria-label="Contactar">
-                ✳
+                Contactar
               </button>
             </div>
           </div>
 
-          {/* Información del trueque */}
+          {/* Informacion del trueque */}
           <div className="info-box">
-            <div className="info-title">Información del trueque</div>
+            <div className="info-title">Informacion del trueque</div>
             <ul>
-              <li>Condición: {product.condition}</li>
-              <li>Intercambio por artículos de valor similar</li>
+              <li>Condicion: {product.condition}</li>
+              <li>Intercambio por articulos de valor similar</li>
               <li>
-                Estado del ítem:{" "}
+                Estado del item:{" "}
                 {product.condition === "Nuevo" ? "Nuevo" : "Usado"}
               </li>
               <li>Disponibilidad: Disponible</li>
@@ -241,7 +241,7 @@ export default function ProductDetail() {
           )}
         </section>
 
-        {/* Columna derecha: Mapa pequeño */}
+        {/* Columna derecha: Mapa pequeno */}
         <section className="prod-right">
           <div className="map-card">
             <LeafletMap

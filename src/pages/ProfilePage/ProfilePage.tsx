@@ -35,39 +35,39 @@ export const ProfilePage: React.FC = () => {
   };
 
   const handlePublishProduct = async (productData: ProductFormData) => {
-    setPublishStatus("loading");
-    try {
-      await addProduct({
-        title: productData.name,
-        category: productData.category,
-        description: productData.description,
-        condition: productData.condition,
-        image: productData.image,
-        location: productData.location
-      });
-      
-      // Refrescar todos los productos para que aparezca inmediatamente en toda la app
-      await refreshProducts();
-      
-      setPublishStatus("success");
-      setShowPublishModal(false);
-      
-      // Recargar los productos del usuario
-      await fetchUserProducts();
-      
-      setTimeout(() => {
-        setPublishStatus("idle");
-      }, 2000);
-      
-    } catch (error) {
-      console.error("Error al publicar producto:", error);
-      setPublishStatus("error");
-      
-      setTimeout(() => {
-        setPublishStatus("idle");
-      }, 3000);
-    }
-  };
+  setPublishStatus("loading");
+  try {
+    const newProduct = await addProduct({
+      title: productData.name,
+      category: productData.category,
+      description: productData.description,
+      condition: productData.condition,
+      image: productData.image,
+      location: productData.location
+    });
+    
+    console.log("Producto creado:", newProduct);
+    
+    // Forzar refresh inmediato
+    await refreshProducts();
+    
+    setPublishStatus("success");
+    setShowPublishModal(false);
+    
+    // Mostrar mensaje de éxito
+    setTimeout(() => {
+      setPublishStatus("idle");
+    }, 3000);
+    
+  } catch (error) {
+    console.error("Error al publicar producto:", error);
+    setPublishStatus("error");
+    
+    setTimeout(() => {
+      setPublishStatus("idle");
+    }, 3000);
+  }
+};
 
   const savedList = Object.values(saved.products);
 

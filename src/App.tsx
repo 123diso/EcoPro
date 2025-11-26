@@ -1,4 +1,3 @@
-// App.tsx
 import React from "react";
 import {
   createBrowserRouter,
@@ -11,6 +10,7 @@ import Navbar from "./components/Navbar/Navbar";
 import HomePage from "./pages/HomePage/HomePage";
 import MapPage from "./pages/MapPage/MapPage";
 import PuntoDetalle from "./pages/PuntoDetalle/PuntoDetalle";
+import RecentProductsPage from "./pages/RecentProductsPage/RecentProductsPage";
 import { LoginPage } from "./pages/LoginPage/LoginPage";
 import { RegisterPage } from "./pages/RegisterPage/RegisterPage";
 import { ProfilePage } from "./pages/ProfilePage/ProfilePage";
@@ -86,6 +86,7 @@ const router = createBrowserRouter([
       { path: "categorias", element: <CategoriesPage /> },
       { path: "categoria/:categoryId", element: <CategoryProductsPage /> },
       { path: "punto/:id", element: <PuntoDetalle /> },
+      {path: "recientes", element: <RecentProductsPage />},
       { path: "perfil", element: <ProfilePage /> },
       { path: "configuracion", element: <SettingsPage /> },
       { path: "producto/:id", element: <ProductDetail /> },
